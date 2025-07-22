@@ -46,7 +46,7 @@ export default function Home() {
             Welcome to SK Skates
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Your one-stop shop for all things skateboarding. RIDE ON.
+            Your one-stop shop for all things skates. RIDE ON.
           </p>
         </section>
 

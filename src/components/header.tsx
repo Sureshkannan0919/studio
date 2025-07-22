@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -53,13 +53,14 @@ export default function Header() {
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
               <nav className="flex flex-col gap-4 mt-8">
                 {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-2 py-1 text-lg"
-                  >
-                    {link.label}
-                  </Link>
+                  <SheetClose asChild key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="block px-2 py-1 text-lg"
+                    >
+                      {link.label}
+                    </Link>
+                  </SheetClose>
                 ))}
               </nav>
             </SheetContent>
