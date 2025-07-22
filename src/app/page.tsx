@@ -55,7 +55,7 @@ export default function Home() {
         <section id="products">
           <h2 className="text-3xl font-headline font-bold text-center mb-10">Our Products</h2>
           <ProductFilters filters={filters} setFilters={setFilters} categories={categories} />
-          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 mt-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 mt-8">
             {filteredAndSortedProducts.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
