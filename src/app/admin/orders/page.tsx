@@ -1,6 +1,8 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
+import type { Order } from "@/lib/types";
 import {
   Table,
   TableBody,
@@ -19,16 +21,36 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal } from "lucide-react";
-import { allOrders } from "@/lib/admin-data";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent
 } from "@/components/ui/dropdown-menu";
+import { getOrders } from "@/lib/firebase/orders";
+import { updateOrderStatus } from "@/lib/firebase/orders-admin";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminOrdersPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    const fetchedOrders = await getOrders();
+    setOrders(fetchedOrders);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const getStatusVariant = (status: string) => {
     switch (status) {
@@ -39,6 +61,24 @@ export default function AdminOrdersPage() {
       default: return "outline";
     }
   };
+
+  const handleStatusUpdate = async (orderId: string, status: Order['status']) => {
+    try {
+      await updateOrderStatus(orderId, status);
+      toast({ title: "Success", description: "Order status updated." });
+      fetchOrders(); // Refresh orders list
+    } catch (error) {
+      toast({ variant: "destructive", title: "Error", description: "Failed to update order status." });
+      console.error(error);
+    }
+  };
+  
+  const formatDate = (timestamp: any) => {
+    if (timestamp && timestamp.toDate) {
+      return timestamp.toDate().toLocaleDateString();
+    }
+    return 'N/A';
+  }
 
   return (
     <div className="space-y-8">
@@ -62,33 +102,54 @@ export default function AdminOrdersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {allOrders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.id}</TableCell>
-                  <TableCell>{order.customer}</TableCell>
-                  <TableCell>{order.date}</TableCell>
-                  <TableCell>{order.total}</TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Mark as Shipped</DropdownMenuItem>
-                        <DropdownMenuItem>Cancel Order</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {loading ? (
+                 [...Array(5)].map((_, i) => (
+                   <TableRow key={i}>
+                      <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-8 w-8" /></TableCell>
+                   </TableRow>
+                ))
+              ) : (
+                orders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium truncate max-w-[100px]">{order.id}</TableCell>
+                    <TableCell>{order.customer.name}</TableCell>
+                    <TableCell>{formatDate(order.createdAt)}</TableCell>
+                    <TableCell>${order.total.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                       <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem disabled>View Details</DropdownMenuItem>
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent>
+                               <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Processing')}>Processing</DropdownMenuItem>
+                               <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Shipped')}>Shipped</DropdownMenuItem>
+                               <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Delivered')}>Delivered</DropdownMenuItem>
+                               <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Cancelled')}>Cancelled</DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuSub>
+                          <DropdownMenuItem disabled className="text-destructive">Cancel Order</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

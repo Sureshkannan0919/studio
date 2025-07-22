@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -16,9 +17,51 @@ import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/hooks/use-cart";
 import { CreditCard, Lock } from "lucide-react";
 import Image from "next/image";
+import { createOrder } from "@/lib/firebase/orders-admin";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
-  const { cart, totalPrice } = useCart();
+  const { cart, totalPrice, clearCart } = useCart();
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const handlePayment = async () => {
+    try {
+      // In a real app, you'd integrate a payment gateway like Stripe
+      // and get customer details from a user session.
+      // For now, we'll simulate a successful payment and create the order.
+      
+      const orderData = {
+        // Mock customer data
+        customer: {
+          name: "John Doe",
+          email: "john.doe@example.com",
+        },
+        items: cart,
+        total: totalPrice,
+        status: "Processing", // Initial status
+      };
+
+      await createOrder(orderData);
+
+      toast({
+        title: "Order Placed!",
+        description: "Thank you for your purchase.",
+      });
+
+      clearCart();
+      router.push("/"); // Redirect to home page after successful order
+
+    } catch (error) {
+      console.error("Failed to create order:", error);
+      toast({
+        variant: "destructive",
+        title: "Order Failed",
+        description: "There was a problem placing your order. Please try again.",
+      });
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -33,16 +76,16 @@ export default function CheckoutPage() {
               <form className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" placeholder="you@example.com" />
+                  <Input id="email" type="email" placeholder="you@example.com" defaultValue="john.doe@example.com" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="first-name">First Name</Label>
-                    <Input id="first-name" placeholder="John" />
+                    <Input id="first-name" placeholder="John" defaultValue="John"/>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="last-name">Last Name</Label>
-                    <Input id="last-name" placeholder="Doe" />
+                    <Input id="last-name" placeholder="Doe" defaultValue="Doe"/>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -119,7 +162,7 @@ export default function CheckoutPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6">
+              <Button onClick={handlePayment} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" disabled={cart.length === 0}>
                 <Lock className="mr-2 h-5 w-5" />
                 Pay ${totalPrice.toFixed(2)}
               </Button>
