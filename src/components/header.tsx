@@ -1,8 +1,9 @@
 
 "use client";
 
+import { useState } from 'react';
 import Link from "next/link";
-import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,10 +23,13 @@ import {
 import { useCart } from "@/hooks/use-cart.tsx";
 import { useWishlist } from "@/hooks/use-wishlist.tsx";
 import { SkateboardIcon } from "./icons/skateboard";
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const { totalItems } = useCart();
   const { wishlist } = useWishlist();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const router = useRouter();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -33,6 +37,12 @@ export default function Header() {
     { href: "/wishlist", label: "Wishlist" },
     { href: "/cart", label: "Cart" },
   ];
+
+  const handleLinkClick = (href: string) => {
+    router.push(href);
+    setIsSheetOpen(false);
+  };
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -45,7 +55,7 @@ export default function Header() {
         </div>
 
         <div className="md:hidden">
-          <Sheet>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
@@ -61,14 +71,14 @@ export default function Header() {
               </SheetHeader>
               <nav className="flex flex-col gap-4 mt-8">
                 {navLinks.map((link) => (
-                  <SheetClose asChild key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="block px-2 py-1 text-lg"
+                    <Button
+                      key={link.href}
+                      variant="ghost"
+                      className="justify-start text-lg"
+                      onClick={() => handleLinkClick(link.href)}
                     >
                       {link.label}
-                    </Link>
-                  </SheetClose>
+                    </Button>
                 ))}
               </nav>
             </SheetContent>
