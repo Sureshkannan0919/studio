@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import Link from "next/link";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,26 +19,18 @@ import {
   Search,
   Menu,
 } from "lucide-react";
-import { useCart } from "@/hooks/use-cart.tsx";
+import { useCart } from "@/hooks/use-cart";
 import { SkateboardIcon } from "./icons/skateboard";
-import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const { totalItems } = useCart();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const router = useRouter();
 
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/#products", label: "Products" },
     { href: "/cart", label: "Cart" },
   ];
-
-  const handleLinkClick = (href: string) => {
-    router.push(href);
-    setIsSheetOpen(false);
-  };
-
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -66,20 +58,17 @@ export default function Header() {
                         <span className="font-bold font-headline text-lg">SK Skates</span>
                     </Link>
                 </SheetTitle>
-                <SheetDescription>
-                  Navigate to your favorite pages.
-                </SheetDescription>
               </SheetHeader>
               <nav className="flex flex-col gap-4 mt-8">
                 {navLinks.map((link) => (
-                    <Button
+                    <Link
                       key={link.href}
-                      variant="ghost"
-                      className="justify-start text-lg"
-                      onClick={() => handleLinkClick(link.href)}
+                      href={link.href}
+                      onClick={() => setIsSheetOpen(false)}
+                      className="text-lg font-medium text-muted-foreground hover:text-foreground"
                     >
                       {link.label}
-                    </Button>
+                    </Link>
                 ))}
               </nav>
             </SheetContent>
@@ -100,16 +89,16 @@ export default function Header() {
             </form>
           </div>
           <nav className="hidden md:flex gap-4">
-            <Link href="/cart" className="relative">
-              <Button variant="ghost" size="icon">
-                <ShoppingCart />
-                {totalItems > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-primary-foreground transform translate-x-1/2 -translate-y-1/2 bg-accent rounded-full">
-                    {totalItems}
-                  </span>
-                )}
-                <span className="sr-only">Cart</span>
-              </Button>
+             <Link href="/cart">
+                <Button variant="ghost" size="icon" className="relative">
+                    <ShoppingCart />
+                    {totalItems > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-primary-foreground transform translate-x-1/2 -translate-y-1/2 bg-accent rounded-full">
+                        {totalItems}
+                    </span>
+                    )}
+                    <span className="sr-only">Cart</span>
+                </Button>
             </Link>
 
             <DropdownMenu>
