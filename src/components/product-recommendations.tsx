@@ -1,20 +1,29 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
 import { productRecommendations } from '@/ai/flows/product-recommendations';
 import type { Product } from '@/lib/types';
-import { products as allProducts } from '@/lib/data';
 import ProductCard from './product-card';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from './ui/skeleton';
 
-export default function ProductRecommendations() {
+interface ProductRecommendationsProps {
+  allProducts: Product[];
+}
+
+export default function ProductRecommendations({ allProducts }: ProductRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getRecommendations() {
+      if (allProducts.length === 0) {
+        setLoading(false);
+        return;
+      };
+
       try {
         setLoading(true);
         const mockInput = {
@@ -41,7 +50,7 @@ export default function ProductRecommendations() {
     }
 
     getRecommendations();
-  }, []);
+  }, [allProducts]);
   
   if (loading) {
     return (

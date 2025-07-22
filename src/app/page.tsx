@@ -1,17 +1,33 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
-import { products as allProducts } from '@/lib/data';
+import { useState, useMemo, useEffect } from 'react';
 import type { Product } from '@/lib/types';
 import ProductCard from '@/components/product-card';
 import ProductFilters from '@/components/product-filters';
 import ProductRecommendations from '@/components/product-recommendations';
+import { getProducts } from '@/lib/firebase/products';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ category: 'all', sort: 'name-asc' });
 
-  const categories = useMemo(() => ['all', ...Array.from(new Set(allProducts.map(p => p.category)))], []);
+  useEffect(() => {
+    async function fetchProducts() {
+      setLoading(true);
+      const products = await getProducts();
+      setAllProducts(products);
+      setLoading(false);
+    }
+    fetchProducts();
+  }, []);
+
+  const categories = useMemo(() => {
+    if (loading || allProducts.length === 0) return ['all'];
+    return ['all', ...Array.from(new Set(allProducts.map(p => p.category)))]
+  }, [allProducts, loading]);
 
   const filteredAndSortedProducts = useMemo(() => {
     let result: Product[] = [...allProducts];
@@ -36,7 +52,7 @@ export default function Home() {
     }
 
     return result;
-  }, [filters]);
+  }, [filters, allProducts]);
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,16 +66,26 @@ export default function Home() {
           </p>
         </section>
 
-        <ProductRecommendations />
+        <ProductRecommendations allProducts={allProducts} />
         
         <section id="products">
           <h2 className="text-3xl font-headline font-bold text-center mb-10">Our Products</h2>
           <ProductFilters filters={filters} setFilters={setFilters} categories={categories} />
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 mt-8">
-            {filteredAndSortedProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-            {filteredAndSortedProducts.length === 0 && (
+            {loading ? (
+                [...Array(8)].map((_, i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-64 w-full" />
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                ))
+            ) : filteredAndSortedProducts.length > 0 ? (
+               filteredAndSortedProducts.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
               <p className="col-span-full text-center text-muted-foreground">No products found matching your criteria.</p>
             )}
           </div>

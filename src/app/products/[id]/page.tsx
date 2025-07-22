@@ -1,6 +1,7 @@
+
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { products } from "@/lib/data";
+import { getProduct, getProducts } from "@/lib/firebase/products";
 import {
   Carousel,
   CarouselContent,
@@ -13,18 +14,26 @@ import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
 import ProductActions from "./_components/product-actions";
 
+// This function is optional, but recommended for performance
+// It tells Next.js which product pages to pre-build at build time
 export async function generateStaticParams() {
+  const products = await getProducts();
   return products.map((product) => ({
     id: product.id,
   }));
 }
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const product = products.find((p) => p.id === params.id);
+export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+  const product = await getProduct(params.id);
 
   if (!product) {
     notFound();
   }
+
+  // Ensure images is an array, provide a fallback if it's not
+  const productImages = Array.isArray(product.images) && product.images.length > 0
+    ? product.images
+    : [product.imageUrl];
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -32,7 +41,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         <div>
           <Carousel className="w-full">
             <CarouselContent>
-              {product.images.map((img, index) => (
+              {productImages.map((img, index) => (
                 <CarouselItem key={index}>
                   <Card>
                     <CardContent className="flex aspect-square items-center justify-center p-0">
