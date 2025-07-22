@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,6 +21,9 @@ import {
   Menu,
   X,
   Heart,
+  Home,
+  ShoppingBag,
+  Settings
 } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { SkateboardIcon } from "./icons/skateboard";
@@ -32,10 +35,10 @@ export default function Header() {
   const router = useRouter();
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/#products", label: "Products" },
-    { href: "/cart", label: "Cart", icon: ShoppingCart },
+    { href: "/", label: "Home", icon: Home },
+    { href: "/#products", label: "Products", icon: ShoppingBag },
     { href: "/favorites", label: "Favorites", icon: Heart },
+    { href: "/cart", label: "Cart", icon: ShoppingCart },
   ];
   
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,8 +64,8 @@ export default function Header() {
           </Link>
         </div>
         
-        <div className={`absolute left-0 right-0 px-4 transition-all duration-300 ${isSearchOpen ? 'top-16 opacity-100' : 'top-0 opacity-0 pointer-events-none'}`}>
-          <form onSubmit={handleSearch}>
+        <div className={`absolute left-0 right-0 top-0 h-16 bg-background z-10 px-4 flex items-center transition-transform duration-300 ${isSearchOpen ? 'translate-y-0' : '-translate-y-full'}`}>
+          <form onSubmit={handleSearch} className="w-full">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -71,14 +74,18 @@ export default function Header() {
                 placeholder="Search products..."
                 className="pl-8 w-full"
               />
-              <Button variant="ghost" size="icon" className="absolute right-0 top-0" onClick={() => setIsSearchOpen(false)}>
+              <Button variant="ghost" size="icon" className="absolute right-0 top-0" type="button" onClick={() => setIsSearchOpen(false)}>
                 <X className="h-5 w-5" />
               </Button>
             </div>
           </form>
         </div>
         
-        <div className="flex items-center justify-end flex-1 space-x-2">
+        <div className="flex items-center justify-end flex-1 space-x-1">
+           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsSearchOpen(true)}>
+              <Search className="h-6 w-6" />
+              <span className="sr-only">Search</span>
+          </Button>
           <nav className="hidden md:flex gap-2">
             <Link href="/cart">
                 <Button variant="ghost" size="icon" className="relative">
@@ -108,16 +115,14 @@ export default function Header() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>My Account</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/admin">Admin Dashboard</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </nav>
           
           <div className="flex items-center md:hidden">
-            <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)}>
-                <Search className="h-6 w-6" />
-                <span className="sr-only">Search</span>
-            </Button>
-
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -136,15 +141,17 @@ export default function Header() {
                       {navLinks.map((link) => {
                         const Icon = link.icon;
                         return (
-                          <Button
-                            key={link.href}
-                            variant="ghost"
-                            className="w-full justify-start text-lg font-medium text-muted-foreground hover:text-foreground -ml-1"
-                            onClick={() => handleLinkClick(link.href)}
-                          >
-                            {Icon && <Icon className="mr-2 h-5 w-5" />}
-                            {link.label}
-                          </Button>
+                          <SheetClose key={link.href} asChild>
+                            <Link href={link.href} className="w-full">
+                                <Button
+                                    variant="ghost"
+                                    className="w-full justify-start text-lg font-medium text-muted-foreground hover:text-foreground -ml-1"
+                                >
+                                    {Icon && <Icon className="mr-2 h-5 w-5" />}
+                                    {link.label}
+                                </Button>
+                             </Link>
+                           </SheetClose>
                         )
                       })}
                       <DropdownMenu>
@@ -155,13 +162,22 @@ export default function Header() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                            <DropdownMenuItem asChild>
-                              <Link href="/login" onClick={() => setIsSheetOpen(false)}>Login</Link>
+                            <SheetClose asChild>
+                                <Link href="/login">Login</Link>
+                            </SheetClose>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
-                              <Link href="/register" onClick={() => setIsSheetOpen(false)}>Register</Link>
+                              <SheetClose asChild>
+                                <Link href="/register">Register</Link>
+                              </SheetClose>
                             </DropdownMenuItem>
                              <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => setIsSheetOpen(false)}>My Account</DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                               <SheetClose asChild>
+                                <Link href="/admin">Admin Dashboard</Link>
+                               </SheetClose>
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </nav>
