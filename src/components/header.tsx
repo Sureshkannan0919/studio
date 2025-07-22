@@ -34,13 +34,15 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <SkateboardIcon className="h-6 w-6 text-primary" />
-          <span className="font-bold font-headline text-lg">SK Skates</span>
-        </Link>
+      <div className="container flex h-16 items-center">
+        <div className="flex items-center gap-2 mr-auto">
+          <Link href="/" className="flex items-center gap-2">
+            <SkateboardIcon className="h-6 w-6 text-primary" />
+            <span className="font-bold font-headline text-lg">SK Skates</span>
+          </Link>
+        </div>
         
-        <div className="flex flex-1 items-center justify-end space-x-2">
+        <div className="flex items-center justify-end space-x-2">
           <div className="hidden md:block">
             <form>
               <div className="relative">
@@ -86,8 +88,12 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           </nav>
-
-          <div className="md:hidden">
+          
+          <div className="flex items-center md:hidden">
+              <Button variant="ghost" size="icon">
+                  <Search className="h-6 w-6" />
+                  <span className="sr-only">Search</span>
+                </Button>
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -104,14 +110,6 @@ export default function Header() {
                       </Link>
                   </SheetTitle>
                 </SheetHeader>
-                <div className="relative mb-8">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search products..."
-                    className="pl-8 w-full"
-                  />
-                </div>
                 <nav className="flex flex-col gap-4">
                   {navLinks.map((link) => (
                       <Link
