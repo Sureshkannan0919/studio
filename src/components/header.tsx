@@ -31,6 +31,7 @@ export default function Header() {
     { href: "/", label: "Home" },
     { href: "/#products", label: "Products" },
     { href: "/wishlist", label: "Wishlist" },
+    { href: "/cart", label: "Cart" },
   ];
 
   return (
