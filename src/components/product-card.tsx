@@ -13,7 +13,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useCart } from "@/hooks/use-cart";
-import { ShoppingCart } from "lucide-react";
+import { useFavorites } from "@/hooks/use-favorites";
+import { ShoppingCart, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
@@ -22,6 +23,19 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
+  const { favorites, addToFavorites, removeFromFavorites } = useFavorites();
+
+  const isFavorite = favorites.some((fav) => fav.id === product.id);
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isFavorite) {
+      removeFromFavorites(product.id);
+    } else {
+      addToFavorites(product);
+    }
+  };
 
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
@@ -38,6 +52,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             />
           </div>
         </Link>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="absolute top-2 right-2 bg-background/50 backdrop-blur-sm rounded-full hover:bg-background/75"
+          onClick={handleFavoriteClick}
+        >
+          <Heart className={cn("w-5 h-5", isFavorite ? "text-red-500 fill-current" : "text-foreground")} />
+        </Button>
       </CardHeader>
       <CardContent className="p-4 flex-grow">
         <Link href={`/products/${product.id}`}>
