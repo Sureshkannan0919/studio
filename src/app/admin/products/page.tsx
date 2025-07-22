@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type { Product } from "@/lib/types";
 import {
   Table,
   TableBody,
@@ -41,7 +42,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusCircle, MoreHorizontal } from "lucide-react";
-import { allProducts } from "@/lib/admin-data";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,31 +49,64 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-type Product = typeof allProducts[0];
+import { getProducts } from "@/lib/firebase/products";
+import { addProduct, deleteProduct } from "@/lib/firebase/products-admin";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminProductsPage() {
-    const [products, setProducts] = useState(allProducts);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-    const [newProduct, setNewProduct] = useState({ id: `PROD00${products.length + 1}`, name: '', category: '', price: '', stock: 0, status: 'Active' });
+    const [newProduct, setNewProduct] = useState({ name: '', category: '', price: '', stock: 0 });
+    const { toast } = useToast();
 
-    const getStatusVariant = (status: string) => {
-        switch (status) {
-            case "Active": return "default";
-            case "OutOfStock": return "destructive";
-            case "Archived": return "secondary";
-            default: return "outline";
-        }
+    useEffect(() => {
+      fetchProducts();
+    }, []);
+
+    const fetchProducts = async () => {
+      setLoading(true);
+      const fetchedProducts = await getProducts();
+      setProducts(fetchedProducts);
+      setLoading(false);
+    }
+
+    const getStatusVariant = (stock: number) => {
+        if (stock > 0) return "default";
+        return "destructive";
     };
 
-    const handleAddProduct = () => {
-        setProducts([...products, { ...newProduct, stock: Number(newProduct.stock) }]);
-        setNewProduct({ id: `PROD00${products.length + 2}`, name: '', category: '', price: '', stock: 0, status: 'Active' });
+     const getStatusText = (stock: number) => {
+        if (stock > 0) return "In Stock";
+        return "Out of Stock";
+    };
+
+    const handleAddProduct = async () => {
+      try {
+        await addProduct({
+          ...newProduct,
+          price: parseFloat(newProduct.price) || 0,
+        });
+        toast({ title: "Success", description: "Product added successfully." });
+        setNewProduct({ name: '', category: '', price: '', stock: 0 });
         setIsAddDialogOpen(false);
+        fetchProducts(); // Refresh product list
+      } catch (error) {
+        toast({ variant: "destructive", title: "Error", description: "Failed to add product." });
+        console.error(error);
+      }
     };
 
-    const handleDeleteProduct = (productId: string) => {
-        setProducts(products.filter(p => p.id !== productId));
+    const handleDeleteProduct = async (productId: string) => {
+       try {
+        await deleteProduct(productId);
+        toast({ title: "Success", description: "Product deleted successfully." });
+        fetchProducts(); // Refresh product list
+      } catch (error) {
+        toast({ variant: "destructive", title: "Error", description: "Failed to delete product." });
+        console.error(error);
+      }
     };
 
   return (
@@ -102,50 +135,63 @@ export default function AdminProductsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell>{product.category}</TableCell>
-                  <TableCell>{product.price}</TableCell>
-                  <TableCell>{product.stock}</TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(product.status)}>{product.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Archive</DropdownMenuItem>
-                         <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="ghost" className="w-full justify-start text-destructive p-2 h-auto font-normal">Delete</Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete this
-                                    product from our servers.
-                                </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDeleteProduct(product.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {loading ? (
+                [...Array(5)].map((_, i) => (
+                   <TableRow key={i}>
+                      <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-12" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                      <TableCell className="text-right"><Skeleton className="h-8 w-8" /></TableCell>
+                   </TableRow>
+                ))
+              ) : (
+                products.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell className="font-medium">{product.name}</TableCell>
+                    <TableCell>{product.category}</TableCell>
+                    <TableCell>${product.price.toFixed(2)}</TableCell>
+                    <TableCell>{product.stock}</TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusVariant(product.stock)}>{getStatusText(product.stock)}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                       <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem disabled>Edit</DropdownMenuItem>
+                          <DropdownMenuItem disabled>Archive</DropdownMenuItem>
+                           <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" className="w-full justify-start text-destructive p-2 h-auto font-normal hover:text-destructive">Delete</Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                      This action cannot be undone. This will permanently delete this
+                                      product from the database.
+                                  </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => handleDeleteProduct(product.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                                  </AlertDialogFooter>
+                              </AlertDialogContent>
+                          </AlertDialog>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
