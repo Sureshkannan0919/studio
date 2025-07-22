@@ -15,26 +15,22 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   ShoppingCart,
-  Heart,
   User,
   Search,
   Menu,
 } from "lucide-react";
 import { useCart } from "@/hooks/use-cart.tsx";
-import { useWishlist } from "@/hooks/use-wishlist.tsx";
 import { SkateboardIcon } from "./icons/skateboard";
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const { totalItems } = useCart();
-  const { wishlist } = useWishlist();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const router = useRouter();
 
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/#products", label: "Products" },
-    { href: "/wishlist", label: "Wishlist" },
     { href: "/cart", label: "Cart" },
   ];
 
@@ -64,7 +60,12 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
               <SheetHeader className="text-left">
-                <SheetTitle>Menu</SheetTitle>
+                 <SheetTitle>
+                    <Link href="/" className="flex items-center gap-2" onClick={() => setIsSheetOpen(false)}>
+                        <SkateboardIcon className="h-6 w-6 text-primary" />
+                        <span className="font-bold font-headline text-lg">SK Skates</span>
+                    </Link>
+                </SheetTitle>
                 <SheetDescription>
                   Navigate to your favorite pages.
                 </SheetDescription>
@@ -99,17 +100,6 @@ export default function Header() {
             </form>
           </div>
           <nav className="hidden md:flex gap-4">
-            <Link href="/wishlist" className="relative">
-              <Button variant="ghost" size="icon">
-                <Heart />
-                {wishlist.length > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-primary-foreground transform translate-x-1/2 -translate-y-1/2 bg-accent rounded-full">
-                    {wishlist.length}
-                  </span>
-                )}
-                <span className="sr-only">Wishlist</span>
-              </Button>
-            </Link>
             <Link href="/cart" className="relative">
               <Button variant="ghost" size="icon">
                 <ShoppingCart />

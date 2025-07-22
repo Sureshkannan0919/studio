@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -12,8 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useCart } from "@/hooks/use-cart";
-import { useWishlist } from "@/hooks/use-wishlist.tsx";
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
@@ -22,20 +22,6 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-
-  const inWishlist = isInWishlist(product.id);
-
-  const handleWishlistClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (inWishlist) {
-      removeFromWishlist(product.id);
-    } else {
-      addToWishlist(product);
-    }
-  };
-
 
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
@@ -52,15 +38,6 @@ export default function ProductCard({ product }: ProductCardProps) {
             />
           </div>
         </Link>
-        <Button 
-          size="icon"
-          variant="secondary"
-          className="absolute top-2 right-2 h-9 w-9 rounded-full bg-background/70 hover:bg-background"
-          onClick={handleWishlistClick}
-          aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-        >
-          <Heart className={cn("h-5 w-5", inWishlist && "fill-accent text-accent")} />
-        </Button>
       </CardHeader>
       <CardContent className="p-4 flex-grow">
         <Link href={`/products/${product.id}`}>

@@ -1,13 +1,12 @@
+
 "use client";
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/use-cart.tsx";
-import { useWishlist } from "@/hooks/use-wishlist.tsx";
 import type { Product } from "@/lib/types";
-import { ShoppingCart, Heart } from "lucide-react";
-import { cn } from '@/lib/utils';
+import { ShoppingCart } from "lucide-react";
 
 interface ProductActionsProps {
     product: Product;
@@ -16,15 +15,6 @@ interface ProductActionsProps {
 export default function ProductActions({ product }: ProductActionsProps) {
     const [quantity, setQuantity] = useState(1);
     const { addToCart } = useCart();
-    const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-
-    const handleToggleWishlist = () => {
-        if (isInWishlist(product.id)) {
-            removeFromWishlist(product.id);
-        } else {
-            addToWishlist(product);
-        }
-    }
 
     return (
         <div className="flex flex-col sm:flex-row gap-4">
@@ -46,14 +36,6 @@ export default function ProductActions({ product }: ProductActionsProps) {
             >
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
-            </Button>
-            <Button 
-                variant="outline" 
-                size="lg" 
-                onClick={handleToggleWishlist}
-            >
-                <Heart className={cn("mr-2 h-5 w-5", isInWishlist(product.id) && "fill-accent text-accent")} />
-                {isInWishlist(product.id) ? 'Saved' : 'Save'}
             </Button>
         </div>
     );
