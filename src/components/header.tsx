@@ -34,49 +34,14 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        <div className="mr-4 hidden md:flex">
-          <Link href="/" className="flex items-center gap-2">
-            <SkateboardIcon className="h-6 w-6 text-primary" />
-            <span className="font-bold font-headline text-lg">SK Skates</span>
-          </Link>
-        </div>
-
-        <div className="md:hidden">
-          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-              <SheetHeader className="text-left">
-                 <SheetTitle>
-                    <Link href="/" className="flex items-center gap-2" onClick={() => setIsSheetOpen(false)}>
-                        <SkateboardIcon className="h-6 w-6 text-primary" />
-                        <span className="font-bold font-headline text-lg">SK Skates</span>
-                    </Link>
-                </SheetTitle>
-              </SheetHeader>
-              <nav className="flex flex-col gap-4 mt-8">
-                {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsSheetOpen(false)}
-                      className="text-lg font-medium text-muted-foreground hover:text-foreground"
-                    >
-                      {link.label}
-                    </Link>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
-
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
+      <div className="container flex h-16 items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <SkateboardIcon className="h-6 w-6 text-primary" />
+          <span className="font-bold font-headline text-lg">SK Skates</span>
+        </Link>
+        
+        <div className="flex flex-1 items-center justify-end space-x-2">
+          <div className="hidden md:block">
             <form>
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -88,7 +53,8 @@ export default function Header() {
               </div>
             </form>
           </div>
-          <nav className="hidden md:flex gap-4">
+
+          <nav className="hidden md:flex gap-2">
              <Link href="/cart">
                 <Button variant="ghost" size="icon" className="relative">
                     <ShoppingCart />
@@ -120,6 +86,49 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           </nav>
+
+          <div className="md:hidden">
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Toggle Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <SheetHeader className="text-left mb-8">
+                   <SheetTitle>
+                      <Link href="/" className="flex items-center gap-2" onClick={() => setIsSheetOpen(false)}>
+                          <SkateboardIcon className="h-6 w-6 text-primary" />
+                          <span className="font-bold font-headline text-lg">SK Skates</span>
+                      </Link>
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="relative mb-8">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder="Search products..."
+                    className="pl-8 w-full"
+                  />
+                </div>
+                <nav className="flex flex-col gap-4">
+                  {navLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setIsSheetOpen(false)}
+                        className="text-lg font-medium text-muted-foreground hover:text-foreground"
+                      >
+                        {link.label}
+                      </Link>
+                  ))}
+                  <Link href="/login" onClick={() => setIsSheetOpen(false)} className="text-lg font-medium text-muted-foreground hover:text-foreground">Login</Link>
+                  <Link href="/register" onClick={() => setIsSheetOpen(false)} className="text-lg font-medium text-muted-foreground hover:text-foreground">Register</Link>
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
