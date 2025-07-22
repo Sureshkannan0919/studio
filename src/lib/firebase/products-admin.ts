@@ -9,14 +9,16 @@ export async function addProduct(productData: {
   category: string;
   price: number;
   stock: number;
+  description?: string;
+  imageUrl?: string;
 }) {
   try {
     // Add default fields for a new product
     const newProduct = {
       ...productData,
-      description: "A great new product.",
-      imageUrl: "https://placehold.co/600x600.png",
-      images: ["https://placehold.co/600x600.png"],
+      description: productData.description || "A great new product.",
+      imageUrl: productData.imageUrl || "https://placehold.co/600x600.png",
+      images: [productData.imageUrl || "https://placehold.co/600x600.png"],
       data_ai_hint: "new product"
     }
     const docRef = await addDoc(collection(db, "products"), newProduct);

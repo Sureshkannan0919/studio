@@ -41,6 +41,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
@@ -58,7 +59,7 @@ export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-    const [newProduct, setNewProduct] = useState({ name: '', category: '', price: '', stock: 0 });
+    const [newProduct, setNewProduct] = useState({ name: '', category: '', price: '', stock: 0, description: '', imageUrl: '' });
     const { toast } = useToast();
 
     useEffect(() => {
@@ -89,7 +90,7 @@ export default function AdminProductsPage() {
           price: parseFloat(newProduct.price) || 0,
         });
         toast({ title: "Success", description: "Product added successfully." });
-        setNewProduct({ name: '', category: '', price: '', stock: 0 });
+        setNewProduct({ name: '', category: '', price: '', stock: 0, description: '', imageUrl: '' });
         setIsAddDialogOpen(false);
         fetchProducts(); // Refresh product list
       } catch (error) {
@@ -198,7 +199,7 @@ export default function AdminProductsPage() {
       </Card>
       
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[480px]">
               <DialogHeader>
                   <DialogTitle>Add New Product</DialogTitle>
                   <DialogDescription>Fill in the details for the new product.</DialogDescription>
@@ -211,6 +212,14 @@ export default function AdminProductsPage() {
                  <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="category" className="text-right">Category</Label>
                     <Input id="category" value={newProduct.category} onChange={(e) => setNewProduct({...newProduct, category: e.target.value})} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="description" className="text-right">Description</Label>
+                    <Textarea id="description" value={newProduct.description} onChange={(e) => setNewProduct({...newProduct, description: e.target.value})} className="col-span-3" />
+                </div>
+                 <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="imageUrl" className="text-right">Image URL</Label>
+                    <Input id="imageUrl" value={newProduct.imageUrl} onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})} className="col-span-3" />
                 </div>
                  <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="price" className="text-right">Price</Label>
