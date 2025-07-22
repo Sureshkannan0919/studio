@@ -17,10 +17,10 @@ import {
   User,
   Search,
   Menu,
-  Waves,
 } from "lucide-react";
 import { useCart } from "@/hooks/use-cart.tsx";
 import { useWishlist } from "@/hooks/use-wishlist.tsx";
+import { SkateboardIcon } from "./icons/skateboard";
 
 export default function Header() {
   const { totalItems } = useCart();
@@ -36,8 +36,8 @@ export default function Header() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="flex items-center gap-2">
-            <Waves className="h-6 w-6 text-primary" />
-            <span className="font-bold font-headline text-lg">ShopWave</span>
+            <SkateboardIcon className="h-6 w-6 text-primary" />
+            <span className="font-bold font-headline text-lg">SK Skates</span>
           </Link>
         </div>
 

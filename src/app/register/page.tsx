@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Waves } from "lucide-react";
+import { SkateboardIcon } from "@/components/icons/skateboard";
 
 export default function RegisterPage() {
   return (
@@ -18,11 +18,11 @@ export default function RegisterPage() {
       <Card className="mx-auto max-w-sm w-full">
          <CardHeader className="text-center">
            <Link href="/" className="flex items-center justify-center gap-2 mb-4">
-            <Waves className="h-8 w-8 text-primary" />
+            <SkateboardIcon className="h-8 w-8 text-primary" />
           </Link>
           <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>
           <CardDescription>
-            Enter your information to get started with ShopWave.
+            Enter your information to get started with SK Skates.
           </CardDescription>
         </CardHeader>
         <CardContent>

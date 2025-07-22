@@ -5,8 +5,8 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
-  title: 'ShopWave',
-  description: 'Your next wave of online shopping.',
+  title: 'SK Skates',
+  description: 'Your one-stop shop for all things skateboarding.',
 };
 
 export default function RootLayout({

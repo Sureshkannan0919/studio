@@ -43,10 +43,10 @@ export default function Home() {
       <div className="space-y-16 py-16">
         <section className="text-center">
           <h1 className="text-4xl md:text-6xl font-headline font-bold text-primary mb-4 animate-fade-in-down">
-            Welcome to ShopWave
+            Welcome to SK Skates
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover your next favorite thing. Quality products, unbeatable prices, and a seamless shopping experience await.
+            Your one-stop shop for all things skateboarding. RIDE ON.
           </p>
         </section>
 
