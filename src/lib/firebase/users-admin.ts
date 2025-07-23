@@ -2,7 +2,7 @@
 'use server';
 
 import { db } from '@/lib/firebase';
-import { doc, setDoc, serverTimestamp, updateDoc } from 'firestore';
+import { doc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 
 // A server-side function to add a new user to the 'users' collection
 export async function addUser(userData: {
