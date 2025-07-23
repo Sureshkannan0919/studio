@@ -128,7 +128,9 @@ export default function Header() {
                   <Link href="/register">Register</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>My Account</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/account">My Account</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/admin">Admin Dashboard</Link>
                 </DropdownMenuItem>
@@ -201,7 +203,11 @@ export default function Header() {
                               </SheetClose>
                             </DropdownMenuItem>
                              <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => setIsSheetOpen(false)}>My Account</DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <SheetClose asChild>
+                                    <Link href="/account">My Account</Link>
+                                </SheetClose>
+                            </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                <SheetClose asChild>
                                 <Link href="/admin">Admin Dashboard</Link>
