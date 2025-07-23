@@ -83,11 +83,13 @@ export default function AdminOrdersPage() {
     }
   };
   
-  const formatDate = (timestamp: any) => {
-    if (timestamp && timestamp.toDate) {
-      return timestamp.toDate().toLocaleString();
+  const formatDate = (dateString: string) => {
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString).toLocaleString();
+    } catch (e) {
+      return 'N/A';
     }
-    return 'N/A';
   }
 
   const handleViewDetails = (order: Order) => {
@@ -186,7 +188,7 @@ export default function AdminOrdersPage() {
                   <p><span className="font-medium text-foreground">Name:</span> {selectedOrder.customer.name}</p>
                   <p><span className="font-medium text-foreground">Email:</span> {selectedOrder.customer.email}</p>
                   <p><span className="font-medium text-foreground">Mobile:</span> {selectedOrder.customer.mobile || 'N/A'}</p>
-                   <p><span className="font-medium text-foreground">Address:</span> {selectedOrder.customer.address ? `${selectedOrder.customer.address.street}, ${selectedOrder.customer.address.city}, ${selectedOrder.customer.address.zip}` : 'N/A'}</p>
+                   <p><span className="font-medium text-foreground">Address:</span> {selectedOrder.customer.address ? `${selectedOrder.customer.address.street}, ${selectedO_rder.customer.address.city}, ${selectedOrder.customer.address.zip}` : 'N/A'}</p>
                 </div>
               </div>
               <Separator />

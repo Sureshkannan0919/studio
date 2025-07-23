@@ -16,10 +16,17 @@ export async function getOrders(): Promise<Order[]> {
       return [];
     }
 
-    const orderList = orderSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    } as Order));
+    const orderList = orderSnapshot.docs.map(doc => {
+      const data = doc.data();
+      // Convert Firestore Timestamp to a serializable format (ISO string)
+      const createdAt = data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString();
+      
+      return {
+        id: doc.id,
+        ...data,
+        createdAt,
+      } as Order;
+    });
     
     return orderList;
   } catch (error) {

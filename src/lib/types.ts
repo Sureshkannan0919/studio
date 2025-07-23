@@ -30,5 +30,5 @@ export interface Order {
   items: CartItem[];
   total: number;
   status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-  createdAt: any; // Firestore Timestamp
+  createdAt: string; // Changed from 'any' to 'string'
 }
