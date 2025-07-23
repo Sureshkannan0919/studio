@@ -196,7 +196,10 @@ export default function AdminOrdersPage() {
                  <h3 className="font-semibold mb-2">Order Information</h3>
                  <div className="text-sm text-muted-foreground space-y-1">
                     <p><span className="font-medium text-foreground">Order Time:</span> {formatDate(selectedOrder.createdAt)}</p>
-                    <p><span className="font-medium text-foreground">Status:</span> <Badge variant={getStatusVariant(selectedOrder.status)}>{selectedOrder.status}</Badge></p>
+                    <div className="flex items-center gap-2">
+                        <span className="font-medium text-foreground">Status:</span>
+                        <Badge variant={getStatusVariant(selectedOrder.status)}>{selectedOrder.status}</Badge>
+                    </div>
                  </div>
               </div>
               <Separator />
