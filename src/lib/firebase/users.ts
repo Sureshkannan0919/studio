@@ -24,6 +24,7 @@ export async function getUsers(): Promise<User[]> {
         uid: doc.id,
         ...data,
         createdAt,
+        role: data.role || 'user', // Provide default role if missing
       } as User;
     });
     

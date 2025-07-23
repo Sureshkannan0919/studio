@@ -2,7 +2,7 @@
 'use server';
 
 import { db } from '@/lib/firebase';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 
 // A server-side function to add a new user to the 'users' collection
 export async function addUser(userData: {
@@ -14,6 +14,7 @@ export async function addUser(userData: {
     const newUser = {
       ...userData,
       createdAt: serverTimestamp(),
+      role: 'user' as const, // Default role for new users
     };
     await setDoc(doc(db, "users", userData.uid), newUser);
     return { success: true, uid: userData.uid };
@@ -21,4 +22,16 @@ export async function addUser(userData: {
     console.error("Error adding user: ", error);
     return { success: false, error: "Failed to add user" };
   }
+}
+
+// A server-side function to update a user's role
+export async function updateUserRole(uid: string, role: 'user' | 'superuser') {
+    try {
+        const userRef = doc(db, "users", uid);
+        await updateDoc(userRef, { role });
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating user role: ", error);
+        return { success: false, error: "Failed to update user role" };
+    }
 }
