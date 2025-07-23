@@ -1,9 +1,13 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Home, Package, ShoppingCart, Users, Settings, Menu } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { onAuthStateChanged, type User as FirebaseAuthUser } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { getUser } from "@/lib/firebase/users";
+import { Home, Package, ShoppingCart, Users, Settings, Menu, ShieldCheck, Lock } from "lucide-react";
 import { SkateboardIcon } from "@/components/icons/skateboard";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -22,6 +26,58 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [user, setUser] = useState<FirebaseAuthUser | null>(null);
+  const [isSuperuser, setIsSuperuser] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        const appUser = await getUser(currentUser.uid);
+        if (appUser && appUser.role === 'superuser') {
+          setIsSuperuser(true);
+        } else {
+          setIsSuperuser(false);
+          router.push('/'); // Redirect non-superusers
+        }
+      } else {
+        router.push('/login'); // Redirect unauthenticated users
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <ShieldCheck className="h-12 w-12 text-primary animate-pulse" />
+          <p className="text-muted-foreground">Verifying access...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isSuperuser) {
+    // This part should ideally not be reached due to the redirect, but it's a good fallback.
+     return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4 text-center p-4">
+          <Lock className="h-12 w-12 text-destructive" />
+          <h1 className="text-2xl font-bold">Access Denied</h1>
+          <p className="text-muted-foreground">You do not have permission to view this page.</p>
+          <Button asChild>
+            <Link href="/">Return to Homepage</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="flex min-h-screen w-full">
