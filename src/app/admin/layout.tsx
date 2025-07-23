@@ -112,8 +112,8 @@ export default function AdminLayout({
           </div>
         </nav>
       </aside>
-      <div className="flex flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-4 border-b bg-background px-6">
+      <div className="flex flex-1 flex-col overflow-x-hidden">
+        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-4 border-b bg-background px-4 md:px-6">
           <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
@@ -160,7 +160,7 @@ export default function AdminLayout({
             </SheetContent>
           </Sheet>
           </div>
-           <h1 className="text-lg font-semibold flex-1 md:flex-grow-0">Admin Dashboard</h1>
+           <h1 className="text-lg font-semibold flex-1 md:flex-grow-0 whitespace-nowrap">Admin Dashboard</h1>
         </header>
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             {children}
