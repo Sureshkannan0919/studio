@@ -158,7 +158,6 @@ export default function AdminOrdersPage() {
                                  <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Cancelled')}>Cancelled</DropdownMenuItem>
                               </DropdownMenuSubContent>
                             </DropdownMenuSub>
-                            <DropdownMenuItem disabled className="text-destructive">Cancel Order</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -233,3 +232,5 @@ export default function AdminOrdersPage() {
     </div>
   );
 }
+
+    

@@ -190,10 +190,9 @@ export default function AdminProductsPage() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem onClick={() => handleEditClick(product)}>Edit</DropdownMenuItem>
-                            <DropdownMenuItem disabled>Archive</DropdownMenuItem>
                              <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="ghost" className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full justify-start text-destructive p-2 h-auto font-normal hover:text-destructive">Delete</Button>
+                                    <Button variant="ghost" className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full justify-start text-destructive p-2 h-auto font-normal hover:bg-destructive/10">Delete</Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
@@ -303,3 +302,5 @@ export default function AdminProductsPage() {
     </div>
   );
 }
+
+    
