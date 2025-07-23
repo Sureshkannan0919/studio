@@ -2,19 +2,19 @@
 'use server';
 
 import { db } from '@/lib/firebase';
-import { doc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, updateDoc } from 'firestore';
 
 // A server-side function to add a new user to the 'users' collection
 export async function addUser(userData: {
   uid: string;
   name: string;
   email: string;
+  role: 'user' | 'superuser';
 }) {
   try {
     const newUser = {
       ...userData,
       createdAt: serverTimestamp(),
-      role: 'user' as const, // Default role for new users
     };
     await setDoc(doc(db, "users", userData.uid), newUser);
     return { success: true, uid: userData.uid };

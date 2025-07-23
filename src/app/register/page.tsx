@@ -44,12 +44,21 @@ export default function RegisterPage() {
         uid: user.uid,
         name: `${firstName} ${lastName}`,
         email: user.email!,
+        role: 'user',
       });
 
       toast({ title: "Success", description: "Account created successfully." });
       router.push("/");
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Registration Failed", description: error.message });
+      if (error.code === 'auth/email-already-in-use') {
+        toast({
+            variant: "destructive",
+            title: "Registration Failed",
+            description: "An account with this email already exists. Please login instead.",
+        });
+      } else {
+        toast({ variant: "destructive", title: "Registration Failed", description: error.message });
+      }
     }
   };
 
