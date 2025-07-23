@@ -136,7 +136,7 @@ export default function AdminOrdersPage() {
                     <TableCell className="font-medium truncate max-w-[100px]">{order.id}</TableCell>
                     <TableCell>{order.customer.name}</TableCell>
                     <TableCell>{formatDate(order.createdAt).split(',')[0]}</TableCell>
-                    <TableCell>${order.total.toFixed(2)}</TableCell>
+                    <TableCell>₹{order.total.toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
                     </TableCell>
@@ -217,13 +217,13 @@ export default function AdminOrdersPage() {
                               <span className="font-medium text-foreground">{item.name}</span>
                               <span className="text-muted-foreground"> (x{item.quantity})</span>
                             </div>
-                            <span className="font-medium text-foreground">${(item.price * item.quantity).toFixed(2)}</span>
+                            <span className="font-medium text-foreground">₹{(item.price * item.quantity).toFixed(2)}</span>
                         </div>
                     ))}
                  </div>
                  <div className="flex justify-between font-bold text-base mt-3 pt-3 border-t">
                     <span>Total</span>
-                    <span>${selectedOrder.total.toFixed(2)}</span>
+                    <span>₹{selectedOrder.total.toFixed(2)}</span>
                  </div>
               </div>
             </div>

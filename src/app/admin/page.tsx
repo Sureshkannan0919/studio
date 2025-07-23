@@ -76,7 +76,7 @@ export default function AdminDashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {loading ? <Skeleton className="h-8 w-1/2" /> : <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>}
+            {loading ? <Skeleton className="h-8 w-1/2" /> : <div className="text-2xl font-bold">₹{totalRevenue.toLocaleString()}</div>}
             <p className="text-xs text-muted-foreground">Calculated from all orders</p>
           </CardContent>
         </Card>
@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
                         <TableRow key={order.id}>
                             <TableCell className="font-medium truncate max-w-[100px]">{order.id}</TableCell>
                             <TableCell>{order.customer.name}</TableCell>
-                            <TableCell>${order.total.toFixed(2)}</TableCell>
+                            <TableCell>₹{order.total.toFixed(2)}</TableCell>
                             <TableCell>
                                <Badge variant={order.status === 'Delivered' ? 'default' : order.status === 'Shipped' ? 'secondary' : 'outline'}>{order.status}</Badge>
                             </TableCell>

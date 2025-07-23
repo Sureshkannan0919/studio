@@ -245,20 +245,20 @@ export default function CheckoutPage() {
                         <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                       </div>
                     </div>
-                    <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
                 <Separator />
                 <div className="flex justify-between text-lg font-bold">
                   <p>Total</p>
-                  <p>${totalPrice.toFixed(2)}</p>
+                  <p>₹{totalPrice.toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
             <CardFooter>
               <Button onClick={handlePayment} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" disabled={cart.length === 0}>
                 <Lock className="mr-2 h-5 w-5" />
-                Pay ${totalPrice.toFixed(2)}
+                Pay ₹{totalPrice.toFixed(2)}
               </Button>
             </CardFooter>
           </Card>

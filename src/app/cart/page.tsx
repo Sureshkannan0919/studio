@@ -71,7 +71,7 @@ export default function CartPage() {
                           />
                         </TableCell>
                         <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell>${item.price.toFixed(2)}</TableCell>
+                        <TableCell>₹{item.price.toFixed(2)}</TableCell>
                         <TableCell>
                           <Input
                             type="number"
@@ -81,7 +81,7 @@ export default function CartPage() {
                             className="w-20"
                           />
                         </TableCell>
-                        <TableCell>${(item.price * item.quantity).toFixed(2)}</TableCell>
+                        <TableCell>₹{(item.price * item.quantity).toFixed(2)}</TableCell>
                         <TableCell className="text-right">
                           <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)}>
                             <Trash2 className="h-5 w-5" />
@@ -103,7 +103,7 @@ export default function CartPage() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span>Subtotal ({totalItems} items)</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>₹{totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
@@ -111,7 +111,7 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>₹{totalPrice.toFixed(2)}</span>
                 </div>
               </CardContent>
               <CardFooter>

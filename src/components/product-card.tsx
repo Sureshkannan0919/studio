@@ -68,7 +68,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </CardTitle>
         </Link>
         <p className="font-bold text-primary text-xl">
-          ${product.price.toFixed(2)}
+          ₹{product.price.toFixed(2)}
         </p>
       </CardContent>
       <CardFooter className="p-4 pt-0">

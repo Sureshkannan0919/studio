@@ -49,7 +49,7 @@ export default function FavoritesPage() {
                   <Link href={`/products/${item.id}`} className="hover:underline">
                     <h3 className="font-bold text-lg">{item.name}</h3>
                   </Link>
-                  <p className="text-primary font-semibold text-lg">${item.price.toFixed(2)}</p>
+                  <p className="text-primary font-semibold text-lg">₹{item.price.toFixed(2)}</p>
                 </div>
               </div>
               <div className="flex gap-2">

@@ -73,7 +73,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
             <span className="text-muted-foreground">(123 reviews)</span>
           </div>
           <p className="text-lg text-muted-foreground">{product.description}</p>
-          <p className="text-4xl font-bold text-primary">${product.price.toFixed(2)}</p>
+          <p className="text-4xl font-bold text-primary">₹{product.price.toFixed(2)}</p>
           
           <ProductActions product={product} />
 
