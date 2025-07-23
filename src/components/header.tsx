@@ -82,12 +82,27 @@ export default function Header() {
         </div>
         
         <div className="flex items-center justify-end flex-1 space-x-1">
-           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsSearchOpen(true)}>
-              <Search className="h-6 w-6" />
-              <span className="sr-only">Search</span>
-          </Button>
-          <nav className="hidden md:flex gap-2">
-            <Link href="/cart">
+          <div className="hidden md:flex items-center gap-2">
+            <form onSubmit={handleSearch} className="relative hidden lg:block">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                name="search"
+                type="search"
+                placeholder="Search..."
+                className="pl-8 w-full"
+              />
+            </form>
+            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsSearchOpen(true)}>
+                <Search className="h-6 w-6" />
+                <span className="sr-only">Search</span>
+            </Button>
+            <Link href="/favorites">
+                <Button variant="ghost" size="icon">
+                    <Heart />
+                    <span className="sr-only">Favorites</span>
+                </Button>
+            </Link>
+             <Link href="/cart">
                 <Button variant="ghost" size="icon" className="relative">
                     <ShoppingCart />
                     {totalItems > 0 && (
@@ -98,7 +113,6 @@ export default function Header() {
                     <span className="sr-only">Cart</span>
                 </Button>
             </Link>
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -120,9 +134,24 @@ export default function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </nav>
+          </div>
           
           <div className="flex items-center md:hidden">
+            <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)}>
+                <Search className="h-6 w-6" />
+                <span className="sr-only">Search</span>
+            </Button>
+             <Link href="/cart">
+                <Button variant="ghost" size="icon" className="relative">
+                    <ShoppingCart />
+                    {totalItems > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-primary-foreground transform translate-x-1/2 -translate-y-1/2 bg-accent rounded-full">
+                        {totalItems}
+                    </span>
+                    )}
+                    <span className="sr-only">Cart</span>
+                </Button>
+            </Link>
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
