@@ -22,23 +22,27 @@ import OverviewChart from "@/components/admin/overview-chart";
 import { DollarSign, Users, Package, ShoppingCart } from "lucide-react";
 import { getProducts } from "@/lib/firebase/products";
 import { getOrders } from "@/lib/firebase/orders";
-import type { Order, Product } from "@/lib/types";
+import { getUsers } from "@/lib/firebase/users";
+import type { Order, Product, User as AppUser } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminDashboardPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
+    const [users, setUsers] = useState<AppUser[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchData() {
             setLoading(true);
-            const [productsData, ordersData] = await Promise.all([
+            const [productsData, ordersData, usersData] = await Promise.all([
                 getProducts(),
                 getOrders(),
+                getUsers()
             ]);
             setProducts(productsData);
             setOrders(ordersData);
+            setUsers(usersData);
             setLoading(false);
         }
         fetchData();
@@ -49,9 +53,7 @@ export default function AdminDashboardPage() {
     const totalProducts = products.length;
     const outOfStockProducts = products.filter(p => p.stock === 0).length;
     const recentOrders = orders.slice(0, 5);
-    
-    // Placeholder for total customers, as user management is not fully implemented
-    const totalCustomers = 0; 
+    const totalCustomers = users.length; 
 
     // Placeholder for sales data for the chart
     const salesData = [
@@ -85,7 +87,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
              {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{totalCustomers}</div>}
-            <p className="text-xs text-muted-foreground">Feature coming soon</p>
+            <p className="text-xs text-muted-foreground">Total registered users</p>
           </CardContent>
         </Card>
         <Card>

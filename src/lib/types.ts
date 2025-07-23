@@ -30,5 +30,12 @@ export interface Order {
   items: CartItem[];
   total: number;
   status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-  createdAt: string; // Changed from 'any' to 'string'
+  createdAt: string; 
+}
+
+export interface User {
+  uid: string;
+  name: string;
+  email: string;
+  createdAt: string;
 }
