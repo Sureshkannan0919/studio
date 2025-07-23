@@ -181,39 +181,47 @@ export default function AdminOrdersPage() {
             </DialogDescription>
           </DialogHeader>
           {selectedOrder && (
-            <div className="space-y-4 pt-4">
-              <div>
-                <h3 className="font-semibold mb-2">Customer Details</h3>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p><span className="font-medium text-foreground">Name:</span> {selectedOrder.customer.name}</p>
-                  <p><span className="font-medium text-foreground">Email:</span> {selectedOrder.customer.email}</p>
-                  <p><span className="font-medium text-foreground">Mobile:</span> {selectedOrder.customer.mobile || 'N/A'}</p>
-                   <p><span className="font-medium text-foreground">Address:</span> {selectedOrder.customer.address ? `${selectedOrder.customer.address.street}, ${selectedOrder.customer.address.city}, ${selectedOrder.customer.address.zip}` : 'N/A'}</p>
+            <div className="space-y-6 pt-4 text-sm">
+              <div className="space-y-2">
+                <h3 className="font-semibold text-base">Customer Details</h3>
+                <div className="grid grid-cols-[100px_1fr] gap-x-4 gap-y-1">
+                  <span className="text-muted-foreground">Name</span>
+                  <span className="font-medium text-foreground">{selectedOrder.customer.name}</span>
+                  <span className="text-muted-foreground">Email</span>
+                  <span className="font-medium text-foreground">{selectedOrder.customer.email}</span>
+                  <span className="text-muted-foreground">Mobile</span>
+                  <span className="font-medium text-foreground">{selectedOrder.customer.mobile || 'N/A'}</span>
+                   <span className="text-muted-foreground">Address</span>
+                  <span className="font-medium text-foreground">{selectedOrder.customer.address ? `${selectedOrder.customer.address.street}, ${selectedOrder.customer.address.city}, ${selectedOrder.customer.address.zip}` : 'N/A'}</span>
                 </div>
               </div>
               <Separator />
-              <div>
-                 <h3 className="font-semibold mb-2">Order Information</h3>
-                 <div className="text-sm text-muted-foreground space-y-1">
-                    <p><span className="font-medium text-foreground">Order Time:</span> {formatDate(selectedOrder.createdAt)}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">Status:</span>
+              <div className="space-y-2">
+                 <h3 className="font-semibold text-base">Order Information</h3>
+                 <div className="grid grid-cols-[100px_1fr] gap-x-4 gap-y-1">
+                    <span className="text-muted-foreground">Order Time</span>
+                    <span className="font-medium text-foreground">{formatDate(selectedOrder.createdAt)}</span>
+                    <span className="text-muted-foreground">Status</span>
+                    <div className="font-medium text-foreground">
                       <Badge variant={getStatusVariant(selectedOrder.status)}>{selectedOrder.status}</Badge>
                     </div>
                  </div>
               </div>
               <Separator />
                <div>
-                 <h3 className="font-semibold mb-2">Items Ordered</h3>
+                 <h3 className="font-semibold text-base mb-2">Items Ordered</h3>
                  <div className="space-y-2">
                     {selectedOrder.items.map(item => (
-                        <div key={item.id} className="flex justify-between items-center text-sm">
-                            <span>{item.name} (x{item.quantity})</span>
-                            <span>${(item.price * item.quantity).toFixed(2)}</span>
+                        <div key={item.id} className="flex justify-between items-center">
+                            <div>
+                              <span className="font-medium text-foreground">{item.name}</span>
+                              <span className="text-muted-foreground"> (x{item.quantity})</span>
+                            </div>
+                            <span className="font-medium text-foreground">${(item.price * item.quantity).toFixed(2)}</span>
                         </div>
                     ))}
                  </div>
-                 <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t">
+                 <div className="flex justify-between font-bold text-base mt-3 pt-3 border-t">
                     <span>Total</span>
                     <span>${selectedOrder.total.toFixed(2)}</span>
                  </div>
