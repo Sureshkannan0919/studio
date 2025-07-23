@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from "@/components/ui/sheet";
@@ -27,12 +27,30 @@ import {
 } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { SkateboardIcon } from "./icons/skateboard";
+import { onAuthStateChanged, type User as FirebaseAuthUser } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { getUser } from '@/lib/firebase/users';
 
 export default function Header() {
   const { totalItems } = useCart();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [user, setUser] = useState<FirebaseAuthUser | null>(null);
+  const [isSuperuser, setIsSuperuser] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        const appUser = await getUser(currentUser.uid);
+        setIsSuperuser(appUser?.role === 'superuser');
+      } else {
+        setIsSuperuser(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const navLinks = [
     { href: "/", label: "Home", icon: Home },
@@ -121,19 +139,31 @@ export default function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link href="/login">Login</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/register">Register</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                    <Link href="/account">My Account</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/admin">Admin Dashboard</Link>
-                </DropdownMenuItem>
+                {!user ? (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/login">Login</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/register">Register</Link>
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                        <Link href="/account">My Account</Link>
+                    </DropdownMenuItem>
+                    {isSuperuser && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin">Admin Dashboard</Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => auth.signOut()}>
+                      Logout
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -192,27 +222,31 @@ export default function Header() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                           <DropdownMenuItem asChild>
-                            <SheetClose asChild>
-                                <Link href="/login">Login</Link>
-                            </SheetClose>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <SheetClose asChild>
-                                <Link href="/register">Register</Link>
-                              </SheetClose>
-                            </DropdownMenuItem>
-                             <DropdownMenuSeparator />
-                            <DropdownMenuItem asChild>
-                                <SheetClose asChild>
-                                    <Link href="/account">My Account</Link>
-                                </SheetClose>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                               <SheetClose asChild>
-                                <Link href="/admin">Admin Dashboard</Link>
-                               </SheetClose>
-                            </DropdownMenuItem>
+                          {!user ? (
+                            <>
+                              <DropdownMenuItem asChild>
+                                <SheetClose asChild><Link href="/login">Login</Link></SheetClose>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <SheetClose asChild><Link href="/register">Register</Link></SheetClose>
+                              </DropdownMenuItem>
+                            </>
+                          ) : (
+                            <>
+                              <DropdownMenuItem asChild>
+                                  <SheetClose asChild><Link href="/account">My Account</Link></SheetClose>
+                              </DropdownMenuItem>
+                              {isSuperuser && (
+                                <DropdownMenuItem asChild>
+                                 <SheetClose asChild><Link href="/admin">Admin Dashboard</Link></SheetClose>
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem onClick={() => { auth.signOut(); setIsSheetOpen(false); }}>
+                                Logout
+                              </DropdownMenuItem>
+                            </>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </nav>
