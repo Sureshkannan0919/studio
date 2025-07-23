@@ -17,6 +17,7 @@ export async function getUsers(): Promise<User[]> {
 
     const userList = userSnapshot.docs.map(doc => {
       const data = doc.data();
+      // Convert Firestore Timestamp to a serializable format (ISO string)
       const createdAt = data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString();
       
       return {
