@@ -188,7 +188,7 @@ export default function AdminOrdersPage() {
                   <p><span className="font-medium text-foreground">Name:</span> {selectedOrder.customer.name}</p>
                   <p><span className="font-medium text-foreground">Email:</span> {selectedOrder.customer.email}</p>
                   <p><span className="font-medium text-foreground">Mobile:</span> {selectedOrder.customer.mobile || 'N/A'}</p>
-                   <p><span className="font-medium text-foreground">Address:</span> {selectedOrder.customer.address ? `${selectedOrder.customer.address.street}, ${selectedO_rder.customer.address.city}, ${selectedOrder.customer.address.zip}` : 'N/A'}</p>
+                   <p><span className="font-medium text-foreground">Address:</span> {selectedOrder.customer.address ? `${selectedOrder.customer.address.street}, ${selectedOrder.customer.address.city}, ${selectedOrder.customer.address.zip}` : 'N/A'}</p>
                 </div>
               </div>
               <Separator />
