@@ -226,30 +226,30 @@ export default function AdminProductsPage() {
                   <DialogTitle>Add New Product</DialogTitle>
                   <DialogDescription>Fill in the details for the new product.</DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">Name</Label>
-                    <Input id="name" value={newProduct.name} onChange={(e) => setNewProduct({...newProduct, name: e.target.value})} className="col-span-3" />
+              <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
+                <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input id="name" value={newProduct.name} onChange={(e) => setNewProduct({...newProduct, name: e.target.value})} />
                 </div>
-                 <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="category" className="text-right">Category</Label>
-                    <Input id="category" value={newProduct.category} onChange={(e) => setNewProduct({...newProduct, category: e.target.value})} className="col-span-3" />
+                 <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Input id="category" value={newProduct.category} onChange={(e) => setNewProduct({...newProduct, category: e.target.value})} />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="description" className="text-right">Description</Label>
-                    <Textarea id="description" value={newProduct.description} onChange={(e) => setNewProduct({...newProduct, description: e.target.value})} className="col-span-3" />
+                <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea id="description" value={newProduct.description} onChange={(e) => setNewProduct({...newProduct, description: e.target.value})} />
                 </div>
-                 <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="imageUrl" className="text-right">Image URL</Label>
-                    <Input id="imageUrl" value={newProduct.imageUrl} onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})} className="col-span-3" />
+                 <div className="space-y-2">
+                    <Label htmlFor="imageUrl">Image URL</Label>
+                    <Input id="imageUrl" value={newProduct.imageUrl} onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})} />
                 </div>
-                 <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="price" className="text-right">Price</Label>
-                    <Input id="price" value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})} className="col-span-3" />
+                 <div className="space-y-2">
+                    <Label htmlFor="price">Price</Label>
+                    <Input id="price" value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})} />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="stock" className="text-right">Stock</Label>
-                    <Input id="stock" type="number" value={newProduct.stock} onChange={(e) => setNewProduct({...newProduct, stock: Number(e.target.value)})} className="col-span-3" />
+                <div className="space-y-2">
+                    <Label htmlFor="stock">Stock</Label>
+                    <Input id="stock" type="number" value={newProduct.stock} onChange={(e) => setNewProduct({...newProduct, stock: Number(e.target.value)})} />
                 </div>
               </div>
               <DialogFooter>
@@ -266,30 +266,30 @@ export default function AdminProductsPage() {
                   <DialogDescription>Update the details for this product.</DialogDescription>
               </DialogHeader>
               {editingProduct && (
-                <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="edit-name" className="text-right">Name</Label>
-                      <Input id="edit-name" value={editingProduct.name} onChange={(e) => setEditingProduct({...editingProduct, name: e.target.value})} className="col-span-3" />
+                <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
+                  <div className="space-y-2">
+                      <Label htmlFor="edit-name">Name</Label>
+                      <Input id="edit-name" value={editingProduct.name} onChange={(e) => setEditingProduct({...editingProduct, name: e.target.value})} />
                   </div>
-                   <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="edit-category" className="text-right">Category</Label>
-                      <Input id="edit-category" value={editingProduct.category} onChange={(e) => setEditingProduct({...editingProduct, category: e.target.value})} className="col-span-3" />
+                   <div className="space-y-2">
+                      <Label htmlFor="edit-category">Category</Label>
+                      <Input id="edit-category" value={editingProduct.category} onChange={(e) => setEditingProduct({...editingProduct, category: e.target.value})} />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="edit-description" className="text-right">Description</Label>
-                      <Textarea id="edit-description" value={editingProduct.description} onChange={(e) => setEditingProduct({...editingProduct, description: e.target.value})} className="col-span-3" />
+                  <div className="space-y-2">
+                      <Label htmlFor="edit-description">Description</Label>
+                      <Textarea id="edit-description" value={editingProduct.description} onChange={(e) => setEditingProduct({...editingProduct, description: e.target.value})} />
                   </div>
-                   <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="edit-imageUrl" className="text-right">Image URL</Label>
-                      <Input id="edit-imageUrl" value={editingProduct.imageUrl} onChange={(e) => setEditingProduct({...editingProduct, imageUrl: e.target.value})} className="col-span-3" />
+                   <div className="space-y-2">
+                      <Label htmlFor="edit-imageUrl">Image URL</Label>
+                      <Input id="edit-imageUrl" value={editingProduct.imageUrl} onChange={(e) => setEditingProduct({...editingProduct, imageUrl: e.target.value})} />
                   </div>
-                   <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="edit-price" className="text-right">Price</Label>
-                      <Input id="edit-price" value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct, price: parseFloat(e.target.value) || 0})} className="col-span-3" />
+                   <div className="space-y-2">
+                      <Label htmlFor="edit-price">Price</Label>
+                      <Input id="edit-price" value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct, price: parseFloat(e.target.value) || 0})} />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="edit-stock" className="text-right">Stock</Label>
-                      <Input id="edit-stock" type="number" value={editingProduct.stock} onChange={(e) => setEditingProduct({...editingProduct, stock: Number(e.target.value)})} className="col-span-3" />
+                  <div className="space-y-2">
+                      <Label htmlFor="edit-stock">Stock</Label>
+                      <Input id="edit-stock" type="number" value={editingProduct.stock} onChange={(e) => setEditingProduct({...editingProduct, stock: Number(e.target.value)})} />
                   </div>
                 </div>
               )}
@@ -302,5 +302,3 @@ export default function AdminProductsPage() {
     </div>
   );
 }
-
-    
