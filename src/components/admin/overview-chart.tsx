@@ -10,7 +10,6 @@ import {
   CardDescription
 } from "@/components/ui/card"
 import type { ChartConfig } from "@/components/ui/chart"
-import { salesData } from "@/lib/admin-data"
 
 const chartConfig = {
   sales: {
@@ -19,12 +18,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export default function OverviewChart() {
+interface OverviewChartProps {
+  salesData: { name: string; sales: number }[];
+}
+
+export default function OverviewChart({ salesData }: OverviewChartProps) {
   return (
     <Card>
         <CardHeader>
             <CardTitle>Sales Overview</CardTitle>
-            <CardDescription>Monthly sales performance</CardDescription>
+            <CardDescription>Monthly sales data is not yet available.</CardDescription>
         </CardHeader>
         <CardContent>
             <ResponsiveContainer width="100%" height={300}>

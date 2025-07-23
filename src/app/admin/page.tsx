@@ -1,4 +1,7 @@
 
+"use client";
+
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -17,14 +20,50 @@ import {
 import { Badge } from "@/components/ui/badge";
 import OverviewChart from "@/components/admin/overview-chart";
 import { DollarSign, Users, Package, ShoppingCart } from "lucide-react";
-import { recentOrders, salesData } from "@/lib/admin-data";
+import { getProducts } from "@/lib/firebase/products";
+import { getOrders } from "@/lib/firebase/orders";
+import type { Order, Product } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminDashboardPage() {
-    const totalRevenue = salesData.reduce((acc, curr) => acc + curr.sales, 0);
-    const totalCustomers = 42; 
-    const totalProducts = 25;
-    const totalOrders = recentOrders.length;
+    const [products, setProducts] = useState<Product[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true);
+            const [productsData, ordersData] = await Promise.all([
+                getProducts(),
+                getOrders(),
+            ]);
+            setProducts(productsData);
+            setOrders(ordersData);
+            setLoading(false);
+        }
+        fetchData();
+    }, []);
+
+    const totalRevenue = orders.reduce((acc, curr) => acc + curr.total, 0);
+    const totalOrders = orders.length;
+    const totalProducts = products.length;
+    const outOfStockProducts = products.filter(p => p.stock === 0).length;
+    const recentOrders = orders.slice(0, 5);
     
+    // Placeholder for total customers, as user management is not fully implemented
+    const totalCustomers = 0; 
+
+    // Placeholder for sales data for the chart
+    const salesData = [
+      { name: 'Jan', sales: 0 },
+      { name: 'Feb', sales: 0 },
+      { name: 'Mar', sales: 0 },
+      { name: 'Apr', sales: 0 },
+      { name: 'May', sales: 0 },
+      { name: 'Jun', sales: 0 },
+    ];
+
+
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-headline font-bold">Dashboard Overview</h1>
@@ -35,18 +74,18 @@ export default function AdminDashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">+12.5% from last month</p>
+            {loading ? <Skeleton className="h-8 w-1/2" /> : <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>}
+            <p className="text-xs text-muted-foreground">Calculated from all orders</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">New Customers</CardTitle>
+            <CardTitle className="text-sm font-medium">Customers</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+{totalCustomers}</div>
-            <p className="text-xs text-muted-foreground">+5% from last month</p>
+             {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{totalCustomers}</div>}
+            <p className="text-xs text-muted-foreground">Feature coming soon</p>
           </CardContent>
         </Card>
         <Card>
@@ -55,24 +94,24 @@ export default function AdminDashboardPage() {
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+{totalOrders}</div>
-             <p className="text-xs text-muted-foreground">+10% from last month</p>
+            {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">+{totalOrders}</div>}
+             <p className="text-xs text-muted-foreground">All-time order count</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Products in Stock</CardTitle>
+            <CardTitle className="text-sm font-medium">Products</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalProducts}</div>
-            <p className="text-xs text-muted-foreground">2 products out of stock</p>
+             {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{totalProducts}</div>}
+            <p className="text-xs text-muted-foreground">{outOfStockProducts} products out of stock</p>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <OverviewChart />
+        <OverviewChart salesData={salesData} />
         <Card>
             <CardHeader>
                 <CardTitle>Recent Orders</CardTitle>
@@ -89,16 +128,27 @@ export default function AdminDashboardPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {recentOrders.map((order) => (
+                      {loading ? (
+                         [...Array(5)].map((_, i) => (
+                           <TableRow key={i}>
+                              <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                              <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                              <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+                              <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                           </TableRow>
+                        ))
+                      ) : (
+                        recentOrders.map((order) => (
                         <TableRow key={order.id}>
-                            <TableCell className="font-medium">{order.id}</TableCell>
-                            <TableCell>{order.customer}</TableCell>
-                            <TableCell>{order.total}</TableCell>
+                            <TableCell className="font-medium truncate max-w-[100px]">{order.id}</TableCell>
+                            <TableCell>{order.customer.name}</TableCell>
+                            <TableCell>${order.total.toFixed(2)}</TableCell>
                             <TableCell>
-                               <Badge variant={order.status === 'Delivered' ? 'default' : order.status === 'Shipped' ? 'secondary' : 'destructive'}>{order.status}</Badge>
+                               <Badge variant={order.status === 'Delivered' ? 'default' : order.status === 'Shipped' ? 'secondary' : 'outline'}>{order.status}</Badge>
                             </TableCell>
                         </TableRow>
-                        ))}
+                        ))
+                      )}
                     </TableBody>
                 </Table>
             </CardContent>
