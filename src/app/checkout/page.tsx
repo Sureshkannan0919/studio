@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,21 +21,47 @@ import Image from "next/image";
 import { createOrder } from "@/lib/firebase/orders-admin";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, type User } from "firebase/auth";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CheckoutPage() {
   const { cart, totalPrice, clearCart } = useCart();
   const { toast } = useToast();
   const router = useRouter();
 
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const [customerInfo, setCustomerInfo] = useState({
-    email: 'john.doe@example.com',
-    firstName: 'John',
-    lastName: 'Doe',
+    email: '',
+    firstName: '',
+    lastName: '',
     mobile: '',
     address: '',
     city: '',
     zip: ''
   });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        setCustomerInfo(prev => ({
+          ...prev,
+          email: currentUser.email || '',
+          firstName: currentUser.displayName?.split(' ')[0] || '',
+          lastName: currentUser.displayName?.split(' ')[1] || ''
+        }));
+      } else {
+        router.push('/login');
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -89,6 +115,42 @@ export default function CheckoutPage() {
     }
   };
 
+  if (loading) {
+     return (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <h1 className="text-4xl font-headline font-bold mb-8 text-center">Checkout</h1>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div>
+                  <Card>
+                    <CardHeader>
+                      <Skeleton className="h-8 w-1/2" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                    </CardContent>
+                  </Card>
+                </div>
+                 <div>
+                  <Card>
+                    <CardHeader>
+                       <Skeleton className="h-8 w-1/2" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <Skeleton className="h-16 w-full" />
+                       <Skeleton className="h-16 w-full" />
+                    </CardContent>
+                     <CardFooter>
+                       <Skeleton className="h-12 w-full" />
+                     </CardFooter>
+                  </Card>
+                </div>
+            </div>
+        </div>
+     )
+  }
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 className="text-4xl font-headline font-bold mb-8 text-center">Checkout</h1>
@@ -113,7 +175,7 @@ export default function CheckoutPage() {
                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="email">Email Address</Label>
-                      <Input id="email" type="email" placeholder="you@example.com" value={customerInfo.email} onChange={handleInputChange} />
+                      <Input id="email" type="email" placeholder="you@example.com" value={customerInfo.email} onChange={handleInputChange} disabled={!!user} />
                     </div>
                      <div className="space-y-2">
                       <Label htmlFor="mobile">Mobile Number</Label>
