@@ -80,31 +80,29 @@ export default function AdminLayout({
 
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <div className="flex flex-1">
-        <aside className="hidden w-64 flex-col border-r bg-muted/40 p-4 md:flex">
-          <div className="flex h-16 items-center gap-2 mb-4">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-              <SkateboardIcon className="h-6 w-6 text-primary" />
-              <span>SK Skates Admin</span>
+    <div className="flex h-screen w-full bg-muted/40">
+      <aside className="hidden w-64 flex-col border-r bg-background md:flex">
+        <div className="flex h-16 shrink-0 items-center gap-2 border-b px-6">
+          <Link href="/" className="flex items-center gap-2 font-semibold">
+            <SkateboardIcon className="h-6 w-6 text-primary" />
+            <span>SK Skates Admin</span>
+          </Link>
+        </div>
+        <nav className="flex-1 flex flex-col gap-2 p-4">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                pathname === item.href && "bg-muted text-primary"
+              )}
+            >
+              <item.icon className="h-4 w-4" />
+              {item.label}
             </Link>
-          </div>
-          <nav className="flex flex-col gap-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                  pathname === item.href && "bg-muted text-primary"
-                )}
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-           <div className="mt-auto">
+          ))}
+          <div className="mt-auto">
               <Button asChild variant="ghost" className="w-full justify-start text-muted-foreground px-3">
                   <Link href="/">
                       <ArrowLeft className="mr-2 h-4 w-4" />
@@ -112,65 +110,65 @@ export default function AdminLayout({
                   </Link>
               </Button>
           </div>
-        </aside>
-        <div className="flex flex-1 flex-col">
-          <header className="flex h-16 items-center gap-4 border-b bg-muted/40 px-6 md:px-6">
-            <div className="md:hidden">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Menu className="h-6 w-6" />
-                  <span className="sr-only">Toggle navigation menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left">
-                  <SheetTitle className="sr-only">Admin Menu</SheetTitle>
-                  <SheetDescription className="sr-only">Main navigation for the admin dashboard.</SheetDescription>
-                  <div className="flex h-16 items-center gap-2 mb-4 border-b -mt-6 -mx-6 px-6">
-                      <Link href="/" className="flex items-center gap-2 font-semibold">
-                          <SkateboardIcon className="h-6 w-6 text-primary" />
-                          <span>SK Skates Admin</span>
-                      </Link>
-                  </div>
-                  <nav className="grid gap-2 text-lg font-medium">
-                      {navItems.map((item) => (
-                        <SheetClose key={item.href} asChild>
-                          <Link
-                            href={item.href}
-                            className={cn(
-                              "flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
-                              pathname === item.href && "bg-muted text-foreground"
-                            )}
-                          >
-                            <item.icon className="h-5 w-5" />
-                            {item.label}
-                          </Link>
-                        </SheetClose>
-                      ))}
-                  </nav>
-                  <div className="absolute bottom-6 left-6 right-6">
-                      <SheetClose asChild>
-                         <Button asChild variant="outline" className="w-full">
-                           <Link href="/">
-                              <ArrowLeft className="mr-2 h-4 w-4" />
-                              Back to Store
-                           </Link>
-                         </Button>
+        </nav>
+      </aside>
+      <div className="flex flex-1 flex-col">
+        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-4 border-b bg-background px-6">
+          <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0">
+                <SheetTitle className="sr-only">Admin Menu</SheetTitle>
+                <SheetDescription className="sr-only">Main navigation for the admin dashboard.</SheetDescription>
+                 <div className="flex h-16 shrink-0 items-center gap-2 border-b px-6">
+                    <Link href="/" className="flex items-center gap-2 font-semibold">
+                        <SkateboardIcon className="h-6 w-6 text-primary" />
+                        <span>SK Skates Admin</span>
+                    </Link>
+                </div>
+                <nav className="grid gap-2 p-4 text-lg font-medium">
+                    {navItems.map((item) => (
+                      <SheetClose key={item.href} asChild>
+                        <Link
+                          href={item.href}
+                          className={cn(
+                            "flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
+                            pathname === item.href && "bg-muted text-foreground"
+                          )}
+                        >
+                          <item.icon className="h-5 w-5" />
+                          {item.label}
+                        </Link>
                       </SheetClose>
-                  </div>
-              </SheetContent>
-            </Sheet>
-            </div>
-             <h1 className="text-lg font-semibold flex-1 md:flex-grow-0">Admin Dashboard</h1>
-          </header>
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-muted/20 overflow-y-auto">
-              {children}
-          </main>
-        </div>
+                    ))}
+                </nav>
+                <div className="absolute bottom-4 left-4 right-4">
+                    <SheetClose asChild>
+                       <Button asChild variant="outline" className="w-full">
+                         <Link href="/">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Back to Store
+                         </Link>
+                       </Button>
+                    </SheetClose>
+                </div>
+            </SheetContent>
+          </Sheet>
+          </div>
+           <h1 className="text-lg font-semibold flex-1 md:flex-grow-0">Admin Dashboard</h1>
+        </header>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            {children}
+        </main>
+        <footer className="sticky bottom-0 z-10 border-t bg-background py-4 px-6 text-center text-sm text-muted-foreground">
+            © {new Date().getFullYear()} SK Skates Admin Panel
+        </footer>
       </div>
-       <footer className="border-t bg-muted/40 py-4 px-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} SK Skates Admin Panel
-      </footer>
     </div>
   );
 }
