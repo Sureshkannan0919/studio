@@ -3,9 +3,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Package, ShoppingCart, Users, Settings } from "lucide-react";
+import { Home, Package, ShoppingCart, Users, Settings, Menu } from "lucide-react";
 import { SkateboardIcon } from "@/components/icons/skateboard";
 import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/admin", label: "Overview", icon: Home },
@@ -56,6 +58,41 @@ export default function AdminLayout({
         </div>
       </aside>
       <div className="flex flex-1 flex-col">
+        <header className="flex h-16 items-center gap-4 border-b bg-muted/40 px-6 md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+                <div className="flex h-16 items-center gap-2 mb-4">
+                    <Link href="/" className="flex items-center gap-2 font-semibold">
+                        <SkateboardIcon className="h-6 w-6 text-primary" />
+                        <span>SK Skates Admin</span>
+                    </Link>
+                </div>
+                <nav className="grid gap-2 text-lg font-medium">
+                    {navItems.map((item) => (
+                      <SheetClose key={item.href} asChild>
+                        <Link
+                          href={item.href}
+                          className={cn(
+                            "flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
+                             pathname === item.href && "bg-muted text-foreground"
+                          )}
+                        >
+                          <item.icon className="h-5 w-5" />
+                          {item.label}
+                        </Link>
+                      </SheetClose>
+                    ))}
+                </nav>
+            </SheetContent>
+          </Sheet>
+           <h1 className="text-lg font-semibold">Admin Dashboard</h1>
+        </header>
         <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-muted/20">
             {children}
         </main>
