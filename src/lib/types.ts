@@ -20,6 +20,12 @@ export interface Order {
   customer: {
     name: string;
     email: string;
+    mobile?: string;
+    address?: {
+      street: string;
+      city: string;
+      zip: string;
+    }
   };
   items: CartItem[];
   total: number;

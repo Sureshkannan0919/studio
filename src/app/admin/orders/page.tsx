@@ -18,6 +18,13 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal } from "lucide-react";
@@ -35,10 +42,13 @@ import { getOrders } from "@/lib/firebase/orders";
 import { updateOrderStatus } from "@/lib/firebase/orders-admin";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { toast } = useToast();
 
   const fetchOrders = async () => {
@@ -75,9 +85,14 @@ export default function AdminOrdersPage() {
   
   const formatDate = (timestamp: any) => {
     if (timestamp && timestamp.toDate) {
-      return timestamp.toDate().toLocaleDateString();
+      return timestamp.toDate().toLocaleString();
     }
     return 'N/A';
+  }
+
+  const handleViewDetails = (order: Order) => {
+    setSelectedOrder(order);
+    setIsDetailsOpen(true);
   }
 
   return (
@@ -118,7 +133,7 @@ export default function AdminOrdersPage() {
                   <TableRow key={order.id}>
                     <TableCell className="font-medium truncate max-w-[100px]">{order.id}</TableCell>
                     <TableCell>{order.customer.name}</TableCell>
-                    <TableCell>{formatDate(order.createdAt)}</TableCell>
+                    <TableCell>{formatDate(order.createdAt).split(',')[0]}</TableCell>
                     <TableCell>${order.total.toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
@@ -133,7 +148,7 @@ export default function AdminOrdersPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem disabled>View Details</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleViewDetails(order)}>View Details</DropdownMenuItem>
                           <DropdownMenuSub>
                             <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
                             <DropdownMenuSubContent>
@@ -154,6 +169,55 @@ export default function AdminOrdersPage() {
           </Table>
         </CardContent>
       </Card>
+      
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Order Details</DialogTitle>
+            <DialogDescription>
+              Summary for order #{selectedOrder?.id.substring(0,7)}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedOrder && (
+            <div className="space-y-4 pt-4">
+              <div>
+                <h3 className="font-semibold mb-2">Customer Details</h3>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p><span className="font-medium text-foreground">Name:</span> {selectedOrder.customer.name}</p>
+                  <p><span className="font-medium text-foreground">Email:</span> {selectedOrder.customer.email}</p>
+                  <p><span className="font-medium text-foreground">Mobile:</span> {selectedOrder.customer.mobile || 'N/A'}</p>
+                   <p><span className="font-medium text-foreground">Address:</span> {selectedOrder.customer.address ? `${selectedOrder.customer.address.street}, ${selectedOrder.customer.address.city}, ${selectedOrder.customer.address.zip}` : 'N/A'}</p>
+                </div>
+              </div>
+              <Separator />
+              <div>
+                 <h3 className="font-semibold mb-2">Order Information</h3>
+                 <div className="text-sm text-muted-foreground space-y-1">
+                    <p><span className="font-medium text-foreground">Order Time:</span> {formatDate(selectedOrder.createdAt)}</p>
+                    <p><span className="font-medium text-foreground">Status:</span> <Badge variant={getStatusVariant(selectedOrder.status)}>{selectedOrder.status}</Badge></p>
+                 </div>
+              </div>
+              <Separator />
+               <div>
+                 <h3 className="font-semibold mb-2">Items Ordered</h3>
+                 <div className="space-y-2">
+                    {selectedOrder.items.map(item => (
+                        <div key={item.id} className="flex justify-between items-center text-sm">
+                            <span>{item.name} (x{item.quantity})</span>
+                            <span>${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                    ))}
+                 </div>
+                 <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t">
+                    <span>Total</span>
+                    <span>${selectedOrder.total.toFixed(2)}</span>
+                 </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }
