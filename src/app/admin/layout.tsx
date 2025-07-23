@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Home, Package, ShoppingCart, Users, Settings, Menu } from "lucide-react";
 import { SkateboardIcon } from "@/components/icons/skateboard";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
@@ -67,6 +67,8 @@ export default function AdminLayout({
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
+                <SheetTitle className="sr-only">Admin Menu</SheetTitle>
+                <SheetDescription className="sr-only">Main navigation for the admin dashboard.</SheetDescription>
                 <div className="flex h-16 items-center gap-2 mb-4">
                     <Link href="/" className="flex items-center gap-2 font-semibold">
                         <SkateboardIcon className="h-6 w-6 text-primary" />
