@@ -51,7 +51,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getProducts } from "@/lib/firebase/products";
-import { addProduct, deleteProduct } from "@/lib/firebase/products-admin";
+import { addProduct, deleteProduct, editProduct } from "@/lib/firebase/products-admin";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -59,7 +59,9 @@ export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [newProduct, setNewProduct] = useState({ name: '', category: '', price: '', stock: 0, description: '', imageUrl: '' });
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -98,6 +100,28 @@ export default function AdminProductsPage() {
         console.error(error);
       }
     };
+    
+    const handleEditClick = (product: Product) => {
+        setEditingProduct(product);
+        setIsEditDialogOpen(true);
+    };
+
+    const handleUpdateProduct = async () => {
+        if (!editingProduct) return;
+        try {
+            await editProduct(editingProduct.id, {
+                ...editingProduct,
+                price: parseFloat(editingProduct.price as any) || 0,
+            });
+            toast({ title: "Success", description: "Product updated successfully." });
+            setEditingProduct(null);
+            setIsEditDialogOpen(false);
+            fetchProducts();
+        } catch (error) {
+            toast({ variant: "destructive", title: "Error", description: "Failed to update product." });
+            console.error(error);
+        }
+    }
 
     const handleDeleteProduct = async (productId: string) => {
        try {
@@ -167,7 +191,7 @@ export default function AdminProductsPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem disabled>Edit</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditClick(product)}>Edit</DropdownMenuItem>
                           <DropdownMenuItem disabled>Archive</DropdownMenuItem>
                            <AlertDialog>
                               <AlertDialogTrigger asChild>
@@ -233,6 +257,47 @@ export default function AdminProductsPage() {
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
                 <Button onClick={handleAddProduct}>Save Product</Button>
+              </DialogFooter>
+          </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="sm:max-w-[480px]">
+              <DialogHeader>
+                  <DialogTitle>Edit Product</DialogTitle>
+                  <DialogDescription>Update the details for this product.</DialogDescription>
+              </DialogHeader>
+              {editingProduct && (
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-name" className="text-right">Name</Label>
+                      <Input id="edit-name" value={editingProduct.name} onChange={(e) => setEditingProduct({...editingProduct, name: e.target.value})} className="col-span-3" />
+                  </div>
+                   <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-category" className="text-right">Category</Label>
+                      <Input id="edit-category" value={editingProduct.category} onChange={(e) => setEditingProduct({...editingProduct, category: e.target.value})} className="col-span-3" />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-description" className="text-right">Description</Label>
+                      <Textarea id="edit-description" value={editingProduct.description} onChange={(e) => setEditingProduct({...editingProduct, description: e.target.value})} className="col-span-3" />
+                  </div>
+                   <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-imageUrl" className="text-right">Image URL</Label>
+                      <Input id="edit-imageUrl" value={editingProduct.imageUrl} onChange={(e) => setEditingProduct({...editingProduct, imageUrl: e.target.value})} className="col-span-3" />
+                  </div>
+                   <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-price" className="text-right">Price</Label>
+                      <Input id="edit-price" value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct, price: parseFloat(e.target.value) || 0})} className="col-span-3" />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-stock" className="text-right">Stock</Label>
+                      <Input id="edit-stock" type="number" value={editingProduct.stock} onChange={(e) => setEditingProduct({...editingProduct, stock: Number(e.target.value)})} className="col-span-3" />
+                  </div>
+                </div>
+              )}
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+                <Button onClick={handleUpdateProduct}>Save Changes</Button>
               </DialogFooter>
           </DialogContent>
       </Dialog>

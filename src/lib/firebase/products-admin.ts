@@ -2,6 +2,7 @@
 
 import { db } from '@/lib/firebase';
 import { collection, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import type { Product } from '@/lib/types';
 
 // A server-side function to add a new product to the 'products' collection
 export async function addProduct(productData: {
@@ -41,19 +42,14 @@ export async function deleteProduct(productId: string) {
 }
 
 // A server-side function to edit an existing product in the 'products' collection
-export async function editProduct(productId: string, productData: {
-  name?: string;
-  category?: string;
-  price?: number;
-  stock?: number;
-  description?: string;
-  imageUrl?: string;
-  images?: string[];
-  data_ai_hint?: string;
-}) {
+export async function editProduct(productId: string, productData: Partial<Product>) {
   try {
     const productRef = doc(db, "products", productId);
-    await updateDoc(productRef, productData);
+    // Ensure we don't try to update the ID
+    const dataToUpdate = { ...productData };
+    delete dataToUpdate.id;
+    
+    await updateDoc(productRef, dataToUpdate);
     return { success: true };
   } catch (error) {
     console.error("Error editing product: ", error);
