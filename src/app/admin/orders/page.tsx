@@ -173,7 +173,7 @@ export default function AdminOrdersPage() {
       </Card>
       
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="max-w-md md:max-w-lg">
           <DialogHeader>
             <DialogTitle>Order Details</DialogTitle>
             <DialogDescription>
@@ -197,8 +197,8 @@ export default function AdminOrdersPage() {
                  <div className="text-sm text-muted-foreground space-y-1">
                     <p><span className="font-medium text-foreground">Order Time:</span> {formatDate(selectedOrder.createdAt)}</p>
                     <div className="flex items-center gap-2">
-                        <span className="font-medium text-foreground">Status:</span>
-                        <Badge variant={getStatusVariant(selectedOrder.status)}>{selectedOrder.status}</Badge>
+                      <span className="font-medium text-foreground">Status:</span>
+                      <Badge variant={getStatusVariant(selectedOrder.status)}>{selectedOrder.status}</Badge>
                     </div>
                  </div>
               </div>
