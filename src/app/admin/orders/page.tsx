@@ -14,9 +14,6 @@ import {
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -99,7 +96,7 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-8">
-       <div className="flex items-center justify-between">
+       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
                 <h1 className="text-3xl font-headline font-bold">Orders</h1>
                 <p className="text-muted-foreground">Manage customer orders here.</p>
@@ -107,73 +104,75 @@ export default function AdminOrdersPage() {
        </div>
       <Card>
         <CardContent className="mt-6">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                 [...Array(5)].map((_, i) => (
-                   <TableRow key={i}>
-                      <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-5 w-32" /></TableCell>
-                      <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-5 w-16" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-24" /></TableCell>
-                      <TableCell className="text-right"><Skeleton className="h-8 w-8" /></TableCell>
-                   </TableRow>
-                ))
-              ) : (
-                orders.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-medium truncate max-w-[100px]">{order.id}</TableCell>
-                    <TableCell>{order.customer.name}</TableCell>
-                    <TableCell>{formatDate(order.createdAt).split(',')[0]}</TableCell>
-                    <TableCell>₹{order.total.toFixed(2)}</TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                       <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => handleViewDetails(order)}>View Details</DropdownMenuItem>
-                          <DropdownMenuSub>
-                            <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent>
-                               <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Processing')}>Processing</DropdownMenuItem>
-                               <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Shipped')}>Shipped</DropdownMenuItem>
-                               <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Delivered')}>Delivered</DropdownMenuItem>
-                               <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Cancelled')}>Cancelled</DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                          </DropdownMenuSub>
-                          <DropdownMenuItem disabled className="text-destructive">Cancel Order</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[120px]">Order ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                   [...Array(5)].map((_, i) => (
+                     <TableRow key={i}>
+                        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+                        <TableCell><Skeleton className="h-6 w-24" /></TableCell>
+                        <TableCell className="text-right"><Skeleton className="h-8 w-8" /></TableCell>
+                     </TableRow>
+                  ))
+                ) : (
+                  orders.map((order) => (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-medium truncate max-w-[100px]">{order.id}</TableCell>
+                      <TableCell>{order.customer.name}</TableCell>
+                      <TableCell>{formatDate(order.createdAt).split(',')[0]}</TableCell>
+                      <TableCell>₹{order.total.toFixed(2)}</TableCell>
+                      <TableCell>
+                        <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                         <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => handleViewDetails(order)}>View Details</DropdownMenuItem>
+                            <DropdownMenuSub>
+                              <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
+                              <DropdownMenuSubContent>
+                                 <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Processing')}>Processing</DropdownMenuItem>
+                                 <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Shipped')}>Shipped</DropdownMenuItem>
+                                 <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Delivered')}>Delivered</DropdownMenuItem>
+                                 <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Cancelled')}>Cancelled</DropdownMenuItem>
+                              </DropdownMenuSubContent>
+                            </DropdownMenuSub>
+                            <DropdownMenuItem disabled className="text-destructive">Cancel Order</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
       
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="max-w-md md:max-w-lg">
+        <DialogContent className="max-w-md w-[95%] md:max-w-lg">
           <DialogHeader>
             <DialogTitle>Order Details</DialogTitle>
             <DialogDescription>
@@ -181,27 +180,27 @@ export default function AdminOrdersPage() {
             </DialogDescription>
           </DialogHeader>
           {selectedOrder && (
-            <div className="space-y-6 pt-4 text-sm">
+            <div className="space-y-6 pt-4 text-sm max-h-[70vh] overflow-y-auto pr-2">
               <div className="space-y-2">
                 <h3 className="font-semibold text-base">Customer Details</h3>
-                <div className="grid grid-cols-[100px_1fr] gap-x-4 gap-y-1">
-                  <span className="text-muted-foreground">Name</span>
+                <div className="grid grid-cols-[80px_1fr] gap-x-4 gap-y-2 text-left">
+                  <span className="text-muted-foreground text-right">Name</span>
                   <span className="font-medium text-foreground">{selectedOrder.customer.name}</span>
-                  <span className="text-muted-foreground">Email</span>
-                  <span className="font-medium text-foreground">{selectedOrder.customer.email}</span>
-                  <span className="text-muted-foreground">Mobile</span>
+                  <span className="text-muted-foreground text-right">Email</span>
+                  <span className="font-medium text-foreground truncate">{selectedOrder.customer.email}</span>
+                  <span className="text-muted-foreground text-right">Mobile</span>
                   <span className="font-medium text-foreground">{selectedOrder.customer.mobile || 'N/A'}</span>
-                   <span className="text-muted-foreground">Address</span>
+                   <span className="text-muted-foreground text-right">Address</span>
                   <span className="font-medium text-foreground">{selectedOrder.customer.address ? `${selectedOrder.customer.address.street}, ${selectedOrder.customer.address.city}, ${selectedOrder.customer.address.zip}` : 'N/A'}</span>
                 </div>
               </div>
               <Separator />
               <div className="space-y-2">
                  <h3 className="font-semibold text-base">Order Information</h3>
-                 <div className="grid grid-cols-[100px_1fr] gap-x-4 gap-y-1">
-                    <span className="text-muted-foreground">Order Time</span>
+                 <div className="grid grid-cols-[80px_1fr] gap-x-4 gap-y-2 text-left">
+                    <span className="text-muted-foreground text-right">Order Time</span>
                     <span className="font-medium text-foreground">{formatDate(selectedOrder.createdAt)}</span>
-                    <span className="text-muted-foreground">Status</span>
+                    <span className="text-muted-foreground text-right">Status</span>
                     <div className="font-medium text-foreground">
                       <Badge variant={getStatusVariant(selectedOrder.status)}>{selectedOrder.status}</Badge>
                     </div>
@@ -210,14 +209,14 @@ export default function AdminOrdersPage() {
               <Separator />
                <div>
                  <h3 className="font-semibold text-base mb-2">Items Ordered</h3>
-                 <div className="space-y-2">
+                 <div className="space-y-3">
                     {selectedOrder.items.map(item => (
-                        <div key={item.id} className="flex justify-between items-center">
-                            <div>
+                        <div key={item.id} className="flex justify-between items-start">
+                            <div className="flex-1">
                               <span className="font-medium text-foreground">{item.name}</span>
                               <span className="text-muted-foreground"> (x{item.quantity})</span>
                             </div>
-                            <span className="font-medium text-foreground">₹{(item.price * item.quantity).toFixed(2)}</span>
+                            <span className="font-medium text-foreground text-right w-[80px]">₹{(item.price * item.quantity).toFixed(2)}</span>
                         </div>
                     ))}
                  </div>
