@@ -9,15 +9,9 @@ import type { Order, Product } from '@/lib/types';
 export async function createOrder(orderData: Omit<Order, 'id' | 'createdAt'>) {
   try {
     await runTransaction(db, async (transaction) => {
-      // 1. Create the new order document
-      const newOrder = {
-        ...orderData,
-        createdAt: serverTimestamp(),
-      };
-      const orderRef = doc(collection(db, "orders"));
-      transaction.set(orderRef, newOrder);
-      
-      // 2. Update stock for each product in the order
+      const productUpdates: { ref: DocumentReference, newStock: number }[] = [];
+
+      // Phase 1: READ all product documents first
       for (const item of orderData.items) {
         const productRef = doc(db, "products", item.id);
         const productDoc = await transaction.get(productRef);
@@ -32,8 +26,22 @@ export async function createOrder(orderData: Omit<Order, 'id' | 'createdAt'>) {
         if (newStock < 0) {
           throw new Error(`Not enough stock for ${item.name}. Only ${currentStock} available.`);
         }
+        productUpdates.push({ ref: productRef, newStock });
+      }
 
-        transaction.update(productRef, { stock: newStock });
+      // Phase 2: WRITE all documents
+      // 1. Create the new order document
+      const newOrder = {
+        ...orderData,
+        createdAt: serverTimestamp(),
+        status: 'Processing',
+      };
+      const orderRef = doc(collection(db, "orders"));
+      transaction.set(orderRef, newOrder);
+
+      // 2. Update stock for each product
+      for (const update of productUpdates) {
+        transaction.update(update.ref, { stock: update.newStock });
       }
     });
 
