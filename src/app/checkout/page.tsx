@@ -32,6 +32,7 @@ export default function CheckoutPage() {
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [customerInfo, setCustomerInfo] = useState({
     email: '',
@@ -69,6 +70,9 @@ export default function CheckoutPage() {
   };
 
   const handlePayment = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
       if (cart.length === 0) {
         toast({
@@ -95,23 +99,29 @@ export default function CheckoutPage() {
         status: "Processing",
       };
 
-      await createOrder(orderData);
+      const result = await createOrder(orderData);
+      
+      if (result.success) {
+        toast({
+          title: "Order Placed!",
+          description: "Thank you for your purchase.",
+        });
 
-      toast({
-        title: "Order Placed!",
-        description: "Thank you for your purchase.",
-      });
+        clearCart();
+        router.push("/account");
+      } else {
+        throw new Error(result.error || "An unknown error occurred.");
+      }
 
-      clearCart();
-      router.push("/");
-
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create order:", error);
       toast({
         variant: "destructive",
         title: "Order Failed",
-        description: "There was a problem placing your order. Please try again.",
+        description: `There was a problem placing your order: ${error.message}`,
       });
+    } finally {
+        setIsSubmitting(false);
     }
   };
 
@@ -256,9 +266,9 @@ export default function CheckoutPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button onClick={handlePayment} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" disabled={cart.length === 0}>
+              <Button onClick={handlePayment} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" disabled={cart.length === 0 || isSubmitting}>
                 <Lock className="mr-2 h-5 w-5" />
-                Pay ₹{totalPrice.toFixed(2)}
+                {isSubmitting ? "Placing Order..." : `Pay ₹${totalPrice.toFixed(2)}`}
               </Button>
             </CardFooter>
           </Card>
