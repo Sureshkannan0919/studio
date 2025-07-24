@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { Order } from "@/lib/types";
 import {
   Dialog,
@@ -18,12 +18,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OrderTable from "@/components/admin/order-table";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
   const fetchOrders = async () => {
@@ -72,8 +75,14 @@ export default function AdminOrdersPage() {
     setIsDetailsOpen(true);
   }
 
-  const filteredOrders = (status: Order['status']) => {
-    return orders.filter(order => order.status === status);
+  const searchedOrders = useMemo(() => {
+    if (!searchQuery) return orders;
+    return orders.filter(order => order.id.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [orders, searchQuery]);
+
+
+  const getOrdersByStatus = (status: Order['status']) => {
+    return searchedOrders.filter(order => order.status === status);
   }
 
   return (
@@ -85,6 +94,16 @@ export default function AdminOrdersPage() {
             </div>
        </div>
 
+        <div className="relative">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by Order ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full md:max-w-sm pl-9"
+          />
+        </div>
+
         {loading ? (
             <div className="space-y-4">
                 <Skeleton className="h-10 w-1/3" />
@@ -92,15 +111,15 @@ export default function AdminOrdersPage() {
             </div>
         ) : (
             <Tabs defaultValue="processing">
-                <TabsList>
-                    <TabsTrigger value="processing">Processing ({filteredOrders('Processing').length})</TabsTrigger>
-                    <TabsTrigger value="shipped">Shipped ({filteredOrders('Shipped').length})</TabsTrigger>
-                    <TabsTrigger value="delivered">Delivered ({filteredOrders('Delivered').length})</TabsTrigger>
-                    <TabsTrigger value="cancelled">Cancelled ({filteredOrders('Cancelled').length})</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+                    <TabsTrigger value="processing">Processing ({getOrdersByStatus('Processing').length})</TabsTrigger>
+                    <TabsTrigger value="shipped">Shipped ({getOrdersByStatus('Shipped').length})</TabsTrigger>
+                    <TabsTrigger value="delivered">Delivered ({getOrdersByStatus('Delivered').length})</TabsTrigger>
+                    <TabsTrigger value="cancelled">Cancelled ({getOrdersByStatus('Cancelled').length})</TabsTrigger>
                 </TabsList>
                 <TabsContent value="processing">
                     <OrderTable 
-                        orders={filteredOrders('Processing')}
+                        orders={getOrdersByStatus('Processing')}
                         title="New Orders"
                         onStatusUpdate={handleStatusUpdate}
                         onViewDetails={handleViewDetails}
@@ -108,7 +127,7 @@ export default function AdminOrdersPage() {
                 </TabsContent>
                  <TabsContent value="shipped">
                     <OrderTable 
-                        orders={filteredOrders('Shipped')}
+                        orders={getOrdersByStatus('Shipped')}
                         title="Shipped Orders"
                         onStatusUpdate={handleStatusUpdate}
                         onViewDetails={handleViewDetails}
@@ -116,7 +135,7 @@ export default function AdminOrdersPage() {
                 </TabsContent>
                  <TabsContent value="delivered">
                     <OrderTable 
-                        orders={filteredOrders('Delivered')}
+                        orders={getOrdersByStatus('Delivered')}
                         title="Delivered Orders"
                         onStatusUpdate={handleStatusUpdate}
                         onViewDetails={handleViewDetails}
@@ -124,7 +143,7 @@ export default function AdminOrdersPage() {
                 </TabsContent>
                 <TabsContent value="cancelled">
                     <OrderTable 
-                        orders={filteredOrders('Cancelled')}
+                        orders={getOrdersByStatus('Cancelled')}
                         title="Cancelled Orders"
                         onStatusUpdate={handleStatusUpdate}
                         onViewDetails={handleViewDetails}
