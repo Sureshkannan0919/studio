@@ -16,6 +16,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useFavorites } from "@/hooks/use-favorites";
 import { ShoppingCart, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Badge } from "./ui/badge";
 
 interface ProductCardProps {
   product: Product;
@@ -26,6 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { favorites, addToFavorites, removeFromFavorites } = useFavorites();
 
   const isFavorite = favorites.some((fav) => fav.id === product.id);
+  const isOutOfStock = product.stock === 0;
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -41,7 +43,12 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
       <CardHeader className="p-0 relative">
         <Link href={`/products/${product.id}`} className="block">
-          <div className="aspect-square overflow-hidden">
+          <div className="aspect-square overflow-hidden relative">
+            {isOutOfStock && (
+              <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center">
+                 <Badge variant="destructive" className="text-lg">Sold Out</Badge>
+              </div>
+            )}
             <Image
               src={product.imageUrl}
               alt={product.name}
@@ -55,7 +62,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <Button
           size="icon"
           variant="ghost"
-          className="absolute top-2 right-2 bg-background/50 backdrop-blur-sm rounded-full hover:bg-background/75"
+          className="absolute top-2 right-2 bg-background/50 backdrop-blur-sm rounded-full hover:bg-background/75 z-20"
           onClick={handleFavoriteClick}
         >
           <Heart className={cn("w-5 h-5", isFavorite ? "text-red-500 fill-current" : "text-foreground")} />
@@ -76,9 +83,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           onClick={() => addToCart(product)}
           className="w-full bg-primary hover:bg-primary/90"
           aria-label={`Add ${product.name} to cart`}
+          disabled={isOutOfStock}
         >
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          Add to Cart
+          {isOutOfStock ? 'Out of Stock' : (
+            <>
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              Add to Cart
+            </>
+          )}
         </Button>
       </CardFooter>
     </Card>
