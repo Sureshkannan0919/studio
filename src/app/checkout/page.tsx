@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function CheckoutPage() {
   const { cart, totalPrice, clearCart } = useCart();
@@ -33,6 +34,7 @@ export default function CheckoutPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [customerInfo, setCustomerInfo] = useState({
     email: '',
@@ -70,7 +72,7 @@ export default function CheckoutPage() {
   };
 
   const handlePayment = async () => {
-    if (isSubmitting) return;
+    if (isSubmitting || !acceptedTerms) return;
 
     setIsSubmitting(true);
     try {
@@ -264,9 +266,15 @@ export default function CheckoutPage() {
                   <p>₹{totalPrice.toFixed(2)}</p>
                 </div>
               </div>
+              <div className="flex items-center space-x-2 mt-6">
+                <Checkbox id="terms" checked={acceptedTerms} onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)} />
+                <Label htmlFor="terms" className="text-sm text-muted-foreground leading-normal">
+                    I agree to the <Link href="/privacy-policy" className="underline hover:text-primary">Privacy Policy</Link> and acknowledge that products are non-refundable and non-returnable.
+                </Label>
+              </div>
             </CardContent>
             <CardFooter>
-              <Button onClick={handlePayment} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" disabled={cart.length === 0 || isSubmitting}>
+              <Button onClick={handlePayment} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" disabled={cart.length === 0 || isSubmitting || !acceptedTerms}>
                 <Lock className="mr-2 h-5 w-5" />
                 {isSubmitting ? "Placing Order..." : `Pay ₹${totalPrice.toFixed(2)}`}
               </Button>
