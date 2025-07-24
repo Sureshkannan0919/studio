@@ -4,42 +4,20 @@
 import { useState, useEffect } from "react";
 import type { Order } from "@/lib/types";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent
-} from "@/components/ui/dropdown-menu";
 import { getOrders } from "@/lib/firebase/orders";
 import { updateOrderStatus } from "@/lib/firebase/orders-admin";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import OrderTable from "@/components/admin/order-table";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -94,6 +72,10 @@ export default function AdminOrdersPage() {
     setIsDetailsOpen(true);
   }
 
+  const filteredOrders = (status: Order['status']) => {
+    return orders.filter(order => order.status === status);
+  }
+
   return (
     <div className="space-y-8">
        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -102,73 +84,54 @@ export default function AdminOrdersPage() {
                 <p className="text-muted-foreground">Manage customer orders here.</p>
             </div>
        </div>
-      <Card>
-        <CardContent className="mt-6">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[120px]">Order ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                   [...Array(5)].map((_, i) => (
-                     <TableRow key={i}>
-                        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-5 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-5 w-16" /></TableCell>
-                        <TableCell><Skeleton className="h-6 w-24" /></TableCell>
-                        <TableCell className="text-right"><Skeleton className="h-8 w-8" /></TableCell>
-                     </TableRow>
-                  ))
-                ) : (
-                  orders.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell className="font-medium truncate max-w-[100px]">{order.id}</TableCell>
-                      <TableCell>{order.customer.name}</TableCell>
-                      <TableCell>{formatDate(order.createdAt).split(',')[0]}</TableCell>
-                      <TableCell>₹{order.total.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => handleViewDetails(order)}>View Details</DropdownMenuItem>
-                            <DropdownMenuSub>
-                              <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
-                              <DropdownMenuSubContent>
-                                 <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Processing')}>Processing</DropdownMenuItem>
-                                 <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Shipped')}>Shipped</DropdownMenuItem>
-                                 <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Delivered')}>Delivered</DropdownMenuItem>
-                                 <DropdownMenuItem onClick={() => handleStatusUpdate(order.id, 'Cancelled')}>Cancelled</DropdownMenuItem>
-                              </DropdownMenuSubContent>
-                            </DropdownMenuSub>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+
+        {loading ? (
+            <div className="space-y-4">
+                <Skeleton className="h-10 w-1/3" />
+                <Skeleton className="h-48 w-full" />
+            </div>
+        ) : (
+            <Tabs defaultValue="processing">
+                <TabsList>
+                    <TabsTrigger value="processing">Processing ({filteredOrders('Processing').length})</TabsTrigger>
+                    <TabsTrigger value="shipped">Shipped ({filteredOrders('Shipped').length})</TabsTrigger>
+                    <TabsTrigger value="delivered">Delivered ({filteredOrders('Delivered').length})</TabsTrigger>
+                    <TabsTrigger value="cancelled">Cancelled ({filteredOrders('Cancelled').length})</TabsTrigger>
+                </TabsList>
+                <TabsContent value="processing">
+                    <OrderTable 
+                        orders={filteredOrders('Processing')}
+                        title="New Orders"
+                        onStatusUpdate={handleStatusUpdate}
+                        onViewDetails={handleViewDetails}
+                    />
+                </TabsContent>
+                 <TabsContent value="shipped">
+                    <OrderTable 
+                        orders={filteredOrders('Shipped')}
+                        title="Shipped Orders"
+                        onStatusUpdate={handleStatusUpdate}
+                        onViewDetails={handleViewDetails}
+                    />
+                </TabsContent>
+                 <TabsContent value="delivered">
+                    <OrderTable 
+                        orders={filteredOrders('Delivered')}
+                        title="Delivered Orders"
+                        onStatusUpdate={handleStatusUpdate}
+                        onViewDetails={handleViewDetails}
+                    />
+                </TabsContent>
+                <TabsContent value="cancelled">
+                    <OrderTable 
+                        orders={filteredOrders('Cancelled')}
+                        title="Cancelled Orders"
+                        onStatusUpdate={handleStatusUpdate}
+                        onViewDetails={handleViewDetails}
+                    />
+                </TabsContent>
+            </Tabs>
+        )}
       
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent className="max-w-md w-[95%] md:max-w-lg">
@@ -232,5 +195,3 @@ export default function AdminOrdersPage() {
     </div>
   );
 }
-
-    
