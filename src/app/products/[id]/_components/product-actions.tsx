@@ -41,6 +41,7 @@ export default function ProductActions({ product }: ProductActionsProps) {
                 variant: 'destructive',
                 title: 'Please select a size',
                 description: 'You must choose a size before adding to the cart.',
+                duration: 2000,
             });
             return;
         }
