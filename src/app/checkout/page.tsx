@@ -90,6 +90,19 @@ export default function CheckoutPage() {
   const handlePayment = async () => {
     if (isSubmitting || !acceptedTerms) return;
 
+    // Check for required fields
+    const requiredFields: (keyof typeof customerInfo)[] = ['firstName', 'lastName', 'email', 'mobile', 'flat', 'street', 'city', 'state', 'zip'];
+    const missingField = requiredFields.find(field => !customerInfo[field]);
+
+    if (missingField) {
+      toast({
+        variant: "destructive",
+        title: "Missing Information",
+        description: `Please fill out all required fields. The '${missingField}' field is missing.`,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       if (cart.length === 0) {
@@ -195,11 +208,11 @@ export default function CheckoutPage() {
               <form className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="firstName">First Name <span className="text-destructive">*</span></Label>
                     <Input id="firstName" placeholder="John" value={customerInfo.firstName} onChange={handleInputChange}/>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="lastName">Last Name <span className="text-destructive">*</span></Label>
                     <Input id="lastName" placeholder="Doe" value={customerInfo.lastName} onChange={handleInputChange}/>
                   </div>
                 </div>
@@ -214,11 +227,11 @@ export default function CheckoutPage() {
                     </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="flat">Flat, House no., Building, Company, Apartment</Label>
+                  <Label htmlFor="flat">Flat, House no., Building, Company, Apartment <span className="text-destructive">*</span></Label>
                   <Input id="flat" value={customerInfo.flat} onChange={handleInputChange}/>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="street">Area, Street, Sector, Village</Label>
+                  <Label htmlFor="street">Area, Street, Sector, Village <span className="text-destructive">*</span></Label>
                   <Input id="street" value={customerInfo.street} onChange={handleInputChange}/>
                 </div>
                 <div className="space-y-2">
@@ -227,16 +240,16 @@ export default function CheckoutPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div className="space-y-2">
-                    <Label htmlFor="city">Town/City</Label>
+                    <Label htmlFor="city">Town/City <span className="text-destructive">*</span></Label>
                     <Input id="city" value={customerInfo.city} onChange={handleInputChange}/>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="zip">Pincode</Label>
+                    <Label htmlFor="zip">Pincode <span className="text-destructive">*</span></Label>
                     <Input id="zip" placeholder="123456" value={customerInfo.zip} onChange={handleInputChange}/>
                   </div>
                 </div>
                  <div className="space-y-2">
-                    <Label htmlFor="state">State</Label>
+                    <Label htmlFor="state">State <span className="text-destructive">*</span></Label>
                      <Select value={customerInfo.state} onValueChange={handleStateChange}>
                         <SelectTrigger id="state">
                             <SelectValue placeholder="Select a state" />
