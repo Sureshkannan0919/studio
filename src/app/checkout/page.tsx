@@ -111,6 +111,7 @@ export default function CheckoutPage() {
           title: "Your cart is empty",
           description: "Please add items to your cart before checking out.",
         });
+        setIsSubmitting(false);
         return;
       }
       
