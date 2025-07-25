@@ -138,10 +138,13 @@ export default function AccountPage() {
                         <h4 className="font-semibold mb-3">Order Summary</h4>
                         <div className="space-y-2">
                             {order.items.map(item => (
-                                <div key={item.id} className="flex justify-between items-center text-sm">
+                                <div key={item.id} className="flex justify-between items-start text-sm">
                                     <div>
-                                    <span className="font-medium text-foreground">{item.name}</span>
-                                    <span className="text-muted-foreground"> (x{item.quantity})</span>
+                                        <p className="font-medium text-foreground">{item.name}</p>
+                                        <div className="text-muted-foreground text-xs">
+                                            {item.size && <p>Size: {item.size}</p>}
+                                            <p>Qty: {item.quantity}</p>
+                                        </div>
                                     </div>
                                     <span className="font-medium text-foreground">₹{(item.price * item.quantity).toFixed(2)}</span>
                                 </div>
