@@ -14,9 +14,10 @@ import {
 } from "@/components/ui/card";
 import { useCart } from "@/hooks/use-cart";
 import { useFavorites } from "@/hooks/use-favorites";
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart, Heart, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "./ui/badge";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
@@ -25,9 +26,11 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
   const { favorites, addToFavorites, removeFromFavorites } = useFavorites();
+  const router = useRouter();
 
   const isFavorite = favorites.some((fav) => fav.id === product.id);
   const isOutOfStock = product.stock === 0;
+  const hasSizes = product.sizes && product.sizes.length > 0;
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -36,6 +39,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       removeFromFavorites(product.id);
     } else {
       addToFavorites(product);
+    }
+  };
+
+  const handleAddToCartClick = () => {
+    if (hasSizes) {
+      router.push(`/products/${product.id}`);
+    } else {
+      addToCart(product);
     }
   };
 
@@ -80,16 +91,22 @@ export default function ProductCard({ product }: ProductCardProps) {
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button
-          onClick={() => addToCart(product)}
+          onClick={handleAddToCartClick}
           className="w-full bg-primary hover:bg-primary/90"
           aria-label={`Add ${product.name} to cart`}
           disabled={isOutOfStock}
         >
           {isOutOfStock ? 'Out of Stock' : (
-            <>
-              <ShoppingCart className="mr-2 h-4 w-4" />
-              Add to Cart
-            </>
+            hasSizes ? (
+                <>
+                    Select Size <ArrowRight className="mr-2 h-4 w-4" />
+                </>
+            ) : (
+                <>
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    Add to Cart
+                </>
+            )
           )}
         </Button>
       </CardFooter>
