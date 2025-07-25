@@ -3,7 +3,7 @@
 
 import { db } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, doc, updateDoc, runTransaction, DocumentReference } from 'firebase/firestore';
-import type { Order, Product } from '@/lib/types';
+import type { Order, Product, CartItem } from '@/lib/types';
 
 // A server-side function to add a new order and update product stock
 export async function createOrder(orderData: Omit<Order, 'id' | 'createdAt'>) {
@@ -13,11 +13,12 @@ export async function createOrder(orderData: Omit<Order, 'id' | 'createdAt'>) {
 
       // Phase 1: READ all product documents first
       for (const item of orderData.items) {
-        const productRef = doc(db, "products", item.id);
+        // Use the original productId for database lookups
+        const productRef = doc(db, "products", item.productId);
         const productDoc = await transaction.get(productRef);
 
         if (!productDoc.exists()) {
-          throw new Error(`Product with ID ${item.id} not found.`);
+          throw new Error(`Product with ID ${item.productId} not found.`);
         }
 
         const currentStock = productDoc.data().stock as number;

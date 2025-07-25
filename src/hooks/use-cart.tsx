@@ -41,7 +41,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
             : item
         );
       }
-      return [...prevCart, { ...product, id: cartItemId, quantity }];
+      // Add the item, ensuring we store the original product ID separately.
+      return [...prevCart, { ...product, id: cartItemId, productId: product.id, quantity }];
     });
     toast({
       title: "Added to cart",

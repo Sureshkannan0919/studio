@@ -13,6 +13,8 @@ export interface Product {
 }
 
 export interface CartItem extends Product {
+  id: string; // This is the unique cart item ID (e.g., product.id + '-' + size)
+  productId: string; // This is the original product ID from the database
   quantity: number;
   size?: string;
 }
