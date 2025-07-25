@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +33,7 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { indianStates } from "@/lib/data";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 export default function CheckoutPage() {
@@ -69,14 +70,33 @@ export default function CheckoutPage() {
           lastName: currentUser.displayName?.split(' ')[1] || ''
         }));
       } else {
-        router.push('/login');
+        // Only redirect if cart has items, otherwise they might just be browsing.
+        if (cart.length > 0) {
+          router.push('/login');
+        }
       }
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [router]);
+  }, [router, cart.length]);
 
+  const requiredFields: (keyof typeof customerInfo)[] = ['firstName', 'lastName', 'email', 'mobile', 'flat', 'street', 'city', 'state', 'zip'];
+  
+  const isFormComplete = useMemo(() => {
+    return requiredFields.every(field => customerInfo[field]?.trim() !== '');
+  }, [customerInfo, requiredFields]);
+
+  const isPayButtonDisabled = useMemo(() => {
+    return cart.length === 0 || isSubmitting || !acceptedTerms || !isFormComplete;
+  }, [cart.length, isSubmitting, acceptedTerms, isFormComplete]);
+
+  const getTooltipMessage = () => {
+    if (cart.length === 0) return "Your cart is empty.";
+    if (!isFormComplete) return "Please fill out all required fields.";
+    if (!acceptedTerms) return "Please accept the terms and policy.";
+    return `Pay ₹${totalPrice.toFixed(2)}`;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -88,17 +108,11 @@ export default function CheckoutPage() {
   }
 
   const handlePayment = async () => {
-    if (isSubmitting || !acceptedTerms) return;
-
-    // Check for required fields
-    const requiredFields: (keyof typeof customerInfo)[] = ['firstName', 'lastName', 'email', 'mobile', 'flat', 'street', 'city', 'state', 'zip'];
-    const missingField = requiredFields.find(field => !customerInfo[field]);
-
-    if (missingField) {
-      toast({
+    if (isPayButtonDisabled) {
+       toast({
         variant: "destructive",
         title: "Missing Information",
-        description: `Please fill out all required fields. The '${missingField}' field is missing.`,
+        description: getTooltipMessage(),
       });
       return;
     }
@@ -331,10 +345,25 @@ export default function CheckoutPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button onClick={handlePayment} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" disabled={cart.length === 0 || isSubmitting || !acceptedTerms}>
-                <Lock className="mr-2 h-5 w-5" />
-                {isSubmitting ? "Placing Order..." : `Pay ₹${totalPrice.toFixed(2)}`}
-              </Button>
+             <TooltipProvider>
+                <Tooltip open={isPayButtonDisabled ? undefined : false}>
+                    <TooltipTrigger asChild>
+                        <div className="w-full">
+                           <Button 
+                              onClick={handlePayment} 
+                              className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" 
+                              disabled={isPayButtonDisabled}
+                            >
+                                <Lock className="mr-2 h-5 w-5" />
+                                {isSubmitting ? "Placing Order..." : `Pay ₹${totalPrice.toFixed(2)}`}
+                            </Button>
+                        </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{getTooltipMessage()}</p>
+                    </TooltipContent>
+                </Tooltip>
+             </TooltipProvider>
             </CardFooter>
           </Card>
           <div className="text-center">
@@ -347,3 +376,5 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+    
