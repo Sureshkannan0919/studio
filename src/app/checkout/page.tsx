@@ -186,11 +186,11 @@ export default function CheckoutPage() {
                 </div>
                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
+                      <Label htmlFor="email">Email Address <span className="text-destructive">*</span></Label>
                       <Input id="email" type="email" placeholder="you@example.com" value={customerInfo.email} onChange={handleInputChange} disabled={!!user} />
                     </div>
                      <div className="space-y-2">
-                      <Label htmlFor="mobile">Mobile Number</Label>
+                      <Label htmlFor="mobile">Mobile Number <span className="text-destructive">*</span></Label>
                       <Input id="mobile" type="tel" placeholder="+1 234 567 890" value={customerInfo.mobile} onChange={handleInputChange}/>
                     </div>
                 </div>
