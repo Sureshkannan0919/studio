@@ -52,13 +52,33 @@ import { addProduct, deleteProduct, editProduct } from "@/lib/firebase/products-
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
+type NewProductState = {
+  name: string;
+  category: string;
+  price: string;
+  stock: number;
+  description: string;
+  imageUrl: string;
+  sizes: string;
+}
+
+const initialNewProductState: NewProductState = {
+    name: '',
+    category: '',
+    price: '',
+    stock: 0,
+    description: '',
+    imageUrl: '',
+    sizes: ''
+}
+
 export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const [newProduct, setNewProduct] = useState({ name: '', category: '', price: '', stock: 0, description: '', imageUrl: '' });
-    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [newProduct, setNewProduct] = useState<NewProductState>(initialNewProductState);
+    const [editingProduct, setEditingProduct] = useState<Product & { sizesStr?: string } | null>(null);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -87,9 +107,10 @@ export default function AdminProductsPage() {
         await addProduct({
           ...newProduct,
           price: parseFloat(newProduct.price) || 0,
+          sizes: newProduct.sizes.split(',').map(s => s.trim()).filter(Boolean),
         });
         toast({ title: "Success", description: "Product added successfully." });
-        setNewProduct({ name: '', category: '', price: '', stock: 0, description: '', imageUrl: '' });
+        setNewProduct(initialNewProductState);
         setIsAddDialogOpen(false);
         fetchProducts(); // Refresh product list
       } catch (error) {
@@ -99,7 +120,7 @@ export default function AdminProductsPage() {
     };
     
     const handleEditClick = (product: Product) => {
-        setEditingProduct(product);
+        setEditingProduct({ ...product, sizesStr: product.sizes?.join(', ') || '' });
         setIsEditDialogOpen(true);
     };
 
@@ -109,6 +130,7 @@ export default function AdminProductsPage() {
             await editProduct(editingProduct.id, {
                 ...editingProduct,
                 price: parseFloat(editingProduct.price as any) || 0,
+                sizes: editingProduct.sizesStr?.split(',').map(s => s.trim()).filter(Boolean) || []
             });
             toast({ title: "Success", description: "Product updated successfully." });
             setEditingProduct(null);
@@ -251,6 +273,10 @@ export default function AdminProductsPage() {
                     <Label htmlFor="stock">Stock</Label>
                     <Input id="stock" type="number" value={newProduct.stock} onChange={(e) => setNewProduct({...newProduct, stock: Number(e.target.value)})} />
                 </div>
+                <div className="grid gap-2">
+                    <Label htmlFor="sizes">Sizes (comma-separated)</Label>
+                    <Input id="sizes" value={newProduct.sizes} onChange={(e) => setNewProduct({...newProduct, sizes: e.target.value})} placeholder="e.g. 8, 9, 10" />
+                </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
@@ -269,28 +295,32 @@ export default function AdminProductsPage() {
                 <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
                   <div className="grid gap-2">
                       <Label htmlFor="edit-name">Name</Label>
-                      <Input id="edit-name" value={editingProduct.name} onChange={(e) => setEditingProduct({...editingProduct, name: e.target.value})} />
+                      <Input id="edit-name" value={editingProduct.name} onChange={(e) => setEditingProduct({...editingProduct!, name: e.target.value})} />
                   </div>
                    <div className="grid gap-2">
                       <Label htmlFor="edit-category">Category</Label>
-                      <Input id="edit-category" value={editingProduct.category} onChange={(e) => setEditingProduct({...editingProduct, category: e.target.value})} />
+                      <Input id="edit-category" value={editingProduct.category} onChange={(e) => setEditingProduct({...editingProduct!, category: e.target.value})} />
                   </div>
                   <div className="grid gap-2">
                       <Label htmlFor="edit-description">Description</Label>
-                      <Textarea id="edit-description" value={editingProduct.description} onChange={(e) => setEditingProduct({...editingProduct, description: e.target.value})} />
+                      <Textarea id="edit-description" value={editingProduct.description} onChange={(e) => setEditingProduct({...editingProduct!, description: e.target.value})} />
                   </div>
                    <div className="grid gap-2">
                       <Label htmlFor="edit-imageUrl">Image URL</Label>
-                      <Input id="edit-imageUrl" value={editingProduct.imageUrl} onChange={(e) => setEditingProduct({...editingProduct, imageUrl: e.target.value})} />
+                      <Input id="edit-imageUrl" value={editingProduct.imageUrl} onChange={(e) => setEditingProduct({...editingProduct!, imageUrl: e.target.value})} />
                   </div>
                    <div className="grid gap-2">
                       <Label htmlFor="edit-price">Price</Label>
-                      <Input id="edit-price" value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct, price: parseFloat(e.target.value) || 0})} />
+                      <Input id="edit-price" value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct!, price: parseFloat(e.target.value) || 0})} />
                   </div>
                   <div className="grid gap-2">
                       <Label htmlFor="edit-stock">Stock</Label>
-                      <Input id="edit-stock" type="number" value={editingProduct.stock} onChange={(e) => setEditingProduct({...editingProduct, stock: Number(e.target.value)})} />
+                      <Input id="edit-stock" type="number" value={editingProduct.stock} onChange={(e) => setEditingProduct({...editingProduct!, stock: Number(e.target.value)})} />
                   </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="edit-sizes">Sizes (comma-separated)</Label>
+                    <Input id="edit-sizes" value={editingProduct.sizesStr} onChange={(e) => setEditingProduct({...editingProduct!, sizesStr: e.target.value})} placeholder="e.g. 8, 9, 10" />
+                </div>
                 </div>
               )}
               <DialogFooter>

@@ -9,10 +9,12 @@ export interface Product {
   category: string;
   stock: number;
   data_ai_hint: string;
+  sizes?: string[];
 }
 
 export interface CartItem extends Product {
   quantity: number;
+  size?: string;
 }
 
 export interface Order {

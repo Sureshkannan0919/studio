@@ -1,3 +1,4 @@
+
 'use server';
 
 import { db } from '@/lib/firebase';
@@ -12,6 +13,7 @@ export async function addProduct(productData: {
   stock: number;
   description?: string;
   imageUrl?: string;
+  sizes?: string[];
 }) {
   try {
     // Add default fields for a new product
@@ -20,7 +22,8 @@ export async function addProduct(productData: {
       description: productData.description || "A great new product.",
       imageUrl: productData.imageUrl || "https://placehold.co/600x600.png",
       images: [productData.imageUrl || "https://placehold.co/600x600.png"],
-      data_ai_hint: "new product"
+      data_ai_hint: "new product",
+      sizes: productData.sizes || [],
     }
     const docRef = await addDoc(collection(db, "products"), newProduct);
     return { success: true, id: docRef.id };

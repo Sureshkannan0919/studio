@@ -70,7 +70,10 @@ export default function CartPage() {
                             data-ai-hint={item.data_ai_hint}
                           />
                         </TableCell>
-                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell>
+                          <p className="font-medium">{item.name}</p>
+                          {item.size && <p className="text-sm text-muted-foreground">Size: {item.size}</p>}
+                        </TableCell>
                         <TableCell>₹{item.price.toFixed(2)}</TableCell>
                         <TableCell>
                           <Input

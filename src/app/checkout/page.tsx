@@ -254,7 +254,10 @@ export default function CheckoutPage() {
                       <Image src={item.imageUrl} alt={item.name} width={64} height={64} className="rounded-md" data-ai-hint={item.data_ai_hint} />
                       <div>
                         <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                        <div className="text-sm text-muted-foreground">
+                            {item.size && <p>Size: {item.size}</p>}
+                            <p>Qty: {item.quantity}</p>
+                        </div>
                       </div>
                     </div>
                     <p className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</p>

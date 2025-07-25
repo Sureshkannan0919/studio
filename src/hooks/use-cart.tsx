@@ -14,9 +14,9 @@ import { useToast } from "@/hooks/use-toast";
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  addToCart: (product: Product & { size?: string }, quantity?: number) => void;
+  removeFromCart: (cartItemId: string) => void;
+  updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -28,26 +28,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const { toast } = useToast();
 
-  const addToCart = useCallback((product: Product, quantity = 1) => {
+  const addToCart = useCallback((product: Product & { size?: string }, quantity = 1) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
+      // Cart items need a unique ID that accounts for size.
+      const cartItemId = product.size ? `${product.id}-${product.size}` : product.id;
+      const existingItem = prevCart.find((item) => item.id === cartItemId);
+
       if (existingItem) {
         return prevCart.map((item) =>
-          item.id === product.id
+          item.id === cartItemId
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prevCart, { ...product, quantity }];
+      return [...prevCart, { ...product, id: cartItemId, quantity }];
     });
     toast({
       title: "Added to cart",
-      description: `${product.name} has been added to your cart.`,
+      description: `${product.name} ${product.size ? `(Size: ${product.size})` : ''} has been added to your cart.`,
     });
   }, [toast]);
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  const removeFromCart = useCallback((cartItemId: string) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== cartItemId));
     toast({
       variant: "destructive",
       title: "Removed from cart",
@@ -55,13 +58,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, [toast]);
 
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
+  const updateQuantity = useCallback((cartItemId: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(cartItemId);
     } else {
       setCart((prevCart) =>
         prevCart.map((item) =>
-          item.id === productId ? { ...item, quantity } : item
+          item.id === cartItemId ? { ...item, quantity } : item
         )
       );
     }
