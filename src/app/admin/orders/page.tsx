@@ -194,8 +194,11 @@ export default function AdminOrdersPage() {
                     {selectedOrder.items.map(item => (
                         <div key={item.id} className="flex justify-between items-start">
                             <div className="flex-1">
-                              <span className="font-medium text-foreground">{item.name}</span>
-                              <span className="text-muted-foreground"> (x{item.quantity})</span>
+                                <p className="font-medium text-foreground">{item.name}</p>
+                                <div className="text-sm text-muted-foreground">
+                                    {item.size && <p>Size: {item.size}</p>}
+                                    <p>Qty: {item.quantity}</p>
+                                </div>
                             </div>
                             <span className="font-medium text-foreground text-right w-[80px]">₹{(item.price * item.quantity).toFixed(2)}</span>
                         </div>
