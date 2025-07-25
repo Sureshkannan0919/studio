@@ -73,6 +73,12 @@ export default function AccountPage() {
     }
   };
 
+  const formatAddress = (address: Order['customer']['address']) => {
+    if (!address) return 'N/A';
+    const { flat, street, landmark, city, state, zip } = address;
+    let formatted = [flat, street, landmark, city, state, zip].filter(Boolean).join(', ');
+    return formatted || 'N/A';
+  };
 
   if (loading) {
     return (
@@ -160,7 +166,7 @@ export default function AccountPage() {
                                 <Separator className="my-3" />
                                 <h4 className="font-semibold mb-2">Shipping Address</h4>
                                 <p className="text-sm text-muted-foreground">
-                                    {order.customer.address.street}, {order.customer.address.city}, {order.customer.address.zip}
+                                    {formatAddress(order.customer.address)}
                                 </p>
                            </>
                         )}

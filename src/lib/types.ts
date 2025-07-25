@@ -26,8 +26,11 @@ export interface Order {
     email: string;
     mobile?: string;
     address?: {
+      flat: string;
       street: string;
+      landmark: string;
       city: string;
+      state: string;
       zip: string;
     }
   };

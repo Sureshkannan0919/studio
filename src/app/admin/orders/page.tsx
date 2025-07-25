@@ -85,6 +85,13 @@ export default function AdminOrdersPage() {
     return searchedOrders.filter(order => order.status === status);
   }
 
+   const formatAddress = (address: Order['customer']['address']) => {
+    if (!address) return 'N/A';
+    const { flat, street, landmark, city, state, zip } = address;
+    let formatted = [flat, street, landmark, city, state, zip].filter(Boolean).join(', ');
+    return formatted || 'N/A';
+  };
+
   return (
     <div className="space-y-8">
        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -171,8 +178,8 @@ export default function AdminOrdersPage() {
                   <span className="font-medium text-foreground truncate">{selectedOrder.customer.email}</span>
                   <span className="text-muted-foreground text-right">Mobile</span>
                   <span className="font-medium text-foreground">{selectedOrder.customer.mobile || 'N/A'}</span>
-                   <span className="text-muted-foreground text-right">Address</span>
-                  <span className="font-medium text-foreground">{selectedOrder.customer.address ? `${selectedOrder.customer.address.street}, ${selectedOrder.customer.address.city}, ${selectedOrder.customer.address.zip}` : 'N/A'}</span>
+                   <span className="text-muted-foreground text-right align-top">Address</span>
+                  <span className="font-medium text-foreground whitespace-pre-wrap">{formatAddress(selectedOrder.customer.address)}</span>
                 </div>
               </div>
               <Separator />

@@ -14,6 +14,13 @@ import {
   CardFooter,
   CardDescription
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/hooks/use-cart";
 import { CreditCard, Lock } from "lucide-react";
@@ -25,6 +32,8 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
+import { indianStates } from "@/lib/data";
+
 
 export default function CheckoutPage() {
   const { cart, totalPrice, clearCart } = useCart();
@@ -41,8 +50,11 @@ export default function CheckoutPage() {
     firstName: '',
     lastName: '',
     mobile: '',
-    address: '',
+    flat: '',
+    street: '',
+    landmark: '',
     city: '',
+    state: '',
     zip: ''
   });
 
@@ -71,6 +83,10 @@ export default function CheckoutPage() {
     setCustomerInfo(prev => ({ ...prev, [id]: value }));
   };
 
+  const handleStateChange = (value: string) => {
+    setCustomerInfo(prev => ({...prev, state: value }));
+  }
+
   const handlePayment = async () => {
     if (isSubmitting || !acceptedTerms) return;
 
@@ -91,8 +107,11 @@ export default function CheckoutPage() {
           email: customerInfo.email,
           mobile: customerInfo.mobile,
           address: {
-            street: customerInfo.address,
+            flat: customerInfo.flat,
+            street: customerInfo.street,
+            landmark: customerInfo.landmark,
             city: customerInfo.city,
+            state: customerInfo.state,
             zip: customerInfo.zip,
           }
         },
@@ -191,23 +210,44 @@ export default function CheckoutPage() {
                     </div>
                      <div className="space-y-2">
                       <Label htmlFor="mobile">Mobile Number <span className="text-destructive">*</span></Label>
-                      <Input id="mobile" type="tel" placeholder="+1 234 567 890" value={customerInfo.mobile} onChange={handleInputChange}/>
+                      <Input id="mobile" type="tel" placeholder="+91 12345 67890" value={customerInfo.mobile} onChange={handleInputChange}/>
                     </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input id="address" placeholder="123 Main St" value={customerInfo.address} onChange={handleInputChange}/>
+                  <Label htmlFor="flat">Flat, House no., Building, Company, Apartment</Label>
+                  <Input id="flat" value={customerInfo.flat} onChange={handleInputChange}/>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input id="city" placeholder="Anytown" value={customerInfo.city} onChange={handleInputChange}/>
+                <div className="space-y-2">
+                  <Label htmlFor="street">Area, Street, Sector, Village</Label>
+                  <Input id="street" value={customerInfo.street} onChange={handleInputChange}/>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="landmark">Landmark</Label>
+                  <Input id="landmark" placeholder="E.g. near Appollo hospital" value={customerInfo.landmark} onChange={handleInputChange}/>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                    <Label htmlFor="city">Town/City</Label>
+                    <Input id="city" value={customerInfo.city} onChange={handleInputChange}/>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="zip">ZIP Code</Label>
-                    <Input id="zip" placeholder="12345" value={customerInfo.zip} onChange={handleInputChange}/>
+                    <Label htmlFor="zip">Pincode</Label>
+                    <Input id="zip" placeholder="123456" value={customerInfo.zip} onChange={handleInputChange}/>
                   </div>
                 </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="state">State</Label>
+                     <Select value={customerInfo.state} onValueChange={handleStateChange}>
+                        <SelectTrigger id="state">
+                            <SelectValue placeholder="Select a state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {indianStates.map((state) => (
+                                <SelectItem key={state} value={state}>{state}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                  </div>
               </form>
             </CardContent>
           </Card>
