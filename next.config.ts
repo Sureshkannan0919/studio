@@ -1,6 +1,9 @@
 
 import type {NextConfig} from 'next';
 
+// Load environment variables from .env file
+require('dotenv').config({ path: './.env' });
+
 const nextConfig: NextConfig = {
   /* config options here */
   typescript: {
@@ -24,6 +27,12 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'rectoskates.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.postimg.cc',
         port: '',
         pathname: '/**',
       }
