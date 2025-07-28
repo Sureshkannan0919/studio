@@ -11,7 +11,6 @@ import { Home, Package, ShoppingCart, Users, Settings, Menu, ShieldCheck, Lock, 
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 const navItems = [
   { href: "/admin", label: "Overview", icon: Home },
@@ -84,8 +83,7 @@ export default function AdminLayout({
       <aside className="hidden w-64 flex-col border-r bg-background md:flex">
         <div className="flex h-16 shrink-0 items-center gap-2 border-b px-6">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Image src="/icons/logo.png" alt="ShopWave logo" width={24} height={24} />
-            <span>ShopWave Admin</span>
+            <span>SK Skates Admin</span>
           </Link>
         </div>
         <nav className="flex-1 flex flex-col gap-2 p-4">
@@ -127,8 +125,7 @@ export default function AdminLayout({
                 <SheetDescription className="sr-only">Main navigation for the admin dashboard.</SheetDescription>
                  <div className="flex h-16 shrink-0 items-center gap-2 border-b px-6">
                     <Link href="/" className="flex items-center gap-2 font-semibold">
-                        <Image src="/icons/logo.png" alt="ShopWave logo" width={24} height={24} />
-                        <span>ShopWave Admin</span>
+                        <span>SK Skates Admin</span>
                     </Link>
                 </div>
                 <nav className="grid gap-2 p-4 text-lg font-medium">
@@ -166,7 +163,7 @@ export default function AdminLayout({
             {children}
         </main>
         <footer className="sticky bottom-0 z-10 border-t bg-background py-4 px-6 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ShopWave Admin Panel
+            © {new Date().getFullYear()} SK Skates Admin Panel
         </footer>
       </div>
     </div>

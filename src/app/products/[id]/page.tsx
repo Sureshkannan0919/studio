@@ -66,7 +66,7 @@ function ProductJsonLd({ product }: { product: Product }) {
     mpn: product.id,
     brand: {
       '@type': 'Brand',
-      name: product.category, // Using category as brand for simplicity
+      name: 'SK Skates',
     },
     review: {
       '@type': 'Review',

@@ -5,17 +5,17 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://shopwave.com'), // Replace with your actual domain
+  metadataBase: new URL('https://sk-skates.com'), // Replace with your actual domain
   title: {
-    default: 'ShopWave | Your One-Stop E-commerce Destination',
-    template: '%s | ShopWave',
+    default: 'SK Skates | Your One-Stop E-commerce Destination',
+    template: '%s | SK Skates',
   },
   description: 'Your one-stop shop for the best products, from electronics to fashion. Great deals, fast shipping!',
   openGraph: {
-    title: 'ShopWave | Your One-Stop E-commerce Destination',
+    title: 'SK Skates | Your One-Stop E-commerce Destination',
     description: 'Your one-stop for the best products.',
-    url: 'https://shopwave.com', // Replace with your actual domain
-    siteName: 'ShopWave',
+    url: 'https://sk-skates.com', // Replace with your actual domain
+    siteName: 'SK Skates',
     images: [
       {
         url: '/og-image.png', // Replace with a link to your open graph image
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ShopWave | Your One-Stop E-commerce Destination',
+    title: 'SK Skates | Your One-Stop E-commerce Destination',
     description: 'Your one-stop for the best products.',
     // images: ['/og-image.png'], // Replace with a link to your open graph image
   },

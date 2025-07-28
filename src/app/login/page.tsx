@@ -17,7 +17,6 @@ import {
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
-import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -53,7 +52,7 @@ export default function LoginPage() {
       <Card className="mx-auto max-w-sm w-full">
         <CardHeader className="text-center">
            <Link href="/" className="flex items-center justify-center gap-2 mb-4">
-            <Image src="/icons/logo.png" alt="ShopWave logo" width={32} height={32} />
+            <span className="font-bold font-headline text-2xl">SK Skates</span>
           </Link>
           <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
           <CardDescription>

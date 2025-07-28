@@ -29,7 +29,6 @@ import { useCart } from "@/hooks/use-cart";
 import { onAuthStateChanged, type User as FirebaseAuthUser } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { getUser } from '@/lib/firebase/users';
-import Image from 'next/image';
 
 export default function Header() {
   const { totalItems } = useCart();
@@ -77,8 +76,7 @@ export default function Header() {
       <div className="container flex h-16 items-center">
         <div className="flex items-center gap-2 mr-auto">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/icons/logo.png" alt="ShopWave logo" width={24} height={24} />
-            <span className="font-bold font-headline text-lg">ShopWave</span>
+            <span className="font-bold font-headline text-lg">SK Skates</span>
           </Link>
         </div>
         
@@ -195,8 +193,7 @@ export default function Header() {
                 <SheetTitle className="sr-only">Menu</SheetTitle>
                 <div className="p-4">
                     <Link href="/" className="flex items-center gap-2 mb-8" onClick={() => setIsSheetOpen(false)}>
-                        <Image src="/icons/logo.png" alt="ShopWave logo" width={24} height={24} />
-                        <span className="font-bold font-headline text-lg">ShopWave</span>
+                        <span className="font-bold font-headline text-lg">SK Skates</span>
                     </Link>
                     <nav className="flex flex-col gap-1">
                       {navLinks.map((link) => {

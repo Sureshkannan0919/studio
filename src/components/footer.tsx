@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Twitter, Github, Instagram } from "lucide-react";
-import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -8,11 +7,10 @@ export default function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <Image src="/icons/logo.png" alt="ShopWave logo" width={24} height={24} />
-            <span className="font-bold font-headline text-lg">ShopWave</span>
+            <span className="font-bold font-headline text-lg">SK Skates</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ShopWave, Inc. All rights reserved.
+            © {new Date().getFullYear()} SK Skates, Inc. All rights reserved.
           </p>
           <div className="flex gap-4">
             <Link href="#" className="text-muted-foreground hover:text-foreground">
