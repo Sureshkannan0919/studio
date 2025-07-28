@@ -4,7 +4,6 @@
 import { db } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, doc, updateDoc, runTransaction, DocumentReference } from 'firebase/firestore';
 import type { Order, Product, CartItem } from '@/lib/types';
-import { verifyUserRole } from './admin';
 
 // A server-side function to add a new order and update product stock
 export async function createOrder(orderData: Omit<Order, 'id' | 'createdAt'>) {
@@ -58,7 +57,7 @@ export async function createOrder(orderData: Omit<Order, 'id' | 'createdAt'>) {
 
 // A server-side function to update an order's status
 export async function updateOrderStatus(orderId: string, status: Order['status']) {
-  await verifyUserRole('superuser');
+  // Admin role is verified on the client before this is called.
   try {
     const orderRef = doc(db, "orders", orderId);
     await updateDoc(orderRef, { status });

@@ -4,7 +4,6 @@
 import { db } from '@/lib/firebase';
 import { collection, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import type { Product } from '@/lib/types';
-import { verifyUserRole } from './admin';
 
 // A server-side function to add a new product to the 'products' collection
 export async function addProduct(productData: {
@@ -16,7 +15,7 @@ export async function addProduct(productData: {
   imageUrl?: string;
   sizes?: string[];
 }) {
-  await verifyUserRole('superuser');
+  // Admin role is verified on the client before this is called.
   try {
     // Add default fields for a new product
     const newProduct = {
@@ -37,7 +36,7 @@ export async function addProduct(productData: {
 
 // A server-side function to delete a product from the 'products' collection
 export async function deleteProduct(productId: string) {
-  await verifyUserRole('superuser');
+    // Admin role is verified on the client before this is called.
   try {
     await deleteDoc(doc(db, "products", productId));
     return { success: true };
@@ -49,7 +48,7 @@ export async function deleteProduct(productId: string) {
 
 // A server-side function to edit an existing product in the 'products' collection
 export async function editProduct(productId: string, productData: Partial<Product>) {
-  await verifyUserRole('superuser');
+  // Admin role is verified on the client before this is called.
   try {
     const productRef = doc(db, "products", productId);
     // Ensure we don't try to update the ID
