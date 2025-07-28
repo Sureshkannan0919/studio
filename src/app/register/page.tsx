@@ -66,7 +66,7 @@ export default function RegisterPage() {
       <Card className="mx-auto max-w-sm w-full">
          <CardHeader className="text-center">
            <Link href="/" className="flex items-center justify-center gap-2 mb-4">
-             <span className="font-bold font-headline text-2xl">SK Skates</span>
+             <span className="font-bold font-headline text-2xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">SK Skates</span>
           </Link>
           <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>
           <CardDescription>
