@@ -9,29 +9,20 @@ import { headers } from 'next/headers';
  * @param requiredRole The role required to perform the action.
  */
 export async function verifyUserRole(requiredRole: 'user' | 'superuser') {
-  const authorization = headers().get('Authorization');
-  if (!authorization) {
-    throw new Error('Not authenticated');
-  }
-
-  // Note: In a real app, you would use a library like `firebase-admin`
-  // to properly verify the ID token. For this example, we trust the client's UID.
-  // This is NOT secure for a production application.
-  //
-  // Example with firebase-admin:
-  // const decodedToken = await admin.auth().verifyIdToken(idToken);
-  // const uid = decodedToken.uid;
+  // In a real app, you would use a library like `firebase-admin` 
+  // to properly verify the ID token passed from the client.
+  // For this simplified example, we'll rely on the auth state as seen by the server.
+  // This is NOT a secure pattern for production apps.
+  const currentUser = auth.currentUser;
   
-  const uid = auth.currentUser?.uid;
-
-  if (!uid) {
-    throw new Error('Authentication token is invalid or expired.');
+  if (!currentUser) {
+    throw new Error('Authentication required. Please sign in.');
   }
 
-  const user = await getUser(uid);
+  const user = await getUser(currentUser.uid);
 
   if (!user) {
-    throw new Error('User not found.');
+    throw new Error('User not found in database.');
   }
 
   if (requiredRole === 'superuser' && user.role !== 'superuser') {
