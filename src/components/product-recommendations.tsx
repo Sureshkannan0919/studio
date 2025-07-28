@@ -8,6 +8,7 @@ import ProductCard from './product-card';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Skeleton } from './ui/skeleton';
+import { useFavorites } from '@/hooks/use-favorites';
 
 interface ProductRecommendationsProps {
   allProducts: Product[];
@@ -16,6 +17,7 @@ interface ProductRecommendationsProps {
 export default function ProductRecommendations({ allProducts }: ProductRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { favorites } = useFavorites();
 
   useEffect(() => {
     async function getRecommendations() {
@@ -26,31 +28,49 @@ export default function ProductRecommendations({ allProducts }: ProductRecommend
 
       try {
         setLoading(true);
-        const mockInput = {
-          browsingHistory: "User has looked at modern tech gadgets, and smart home devices.",
-          purchaseHistory: "User has previously bought a Smart Watch X1 and a Wireless Charger.",
-          currentDeals: "Smart Speaker Mini are 20% off. All headphones have free shipping."
+
+        const browsingHistory = favorites.length > 0
+            ? `User has shown interest in the following products: ${favorites.map(f => f.name).join(', ')}.`
+            : "User has not shown any specific interests yet.";
+
+        const input = {
+          browsingHistory,
+          purchaseHistory: "User has not purchased anything yet.",
+          currentDeals: "All decks have free grip tape included. Get 10% off on all apparel."
         };
 
-        const result = await productRecommendations(mockInput);
+        const result = await productRecommendations(input);
         
         const recommendedProducts = result.recommendations
           .map(recName => {
+            // Find the product that is the closest match to the recommendation
             const lowerRecName = recName.toLowerCase();
-            return allProducts.find(p => p.name.toLowerCase() === lowerRecName);
+            return allProducts.find(p => p.name.toLowerCase().includes(lowerRecName) || lowerRecName.includes(p.name.toLowerCase()));
           })
           .filter((p): p is Product => p !== undefined);
+        
+        // Remove duplicates and limit to a reasonable number
+        const uniqueRecommendations = Array.from(new Map(recommendedProducts.map(p => [p.id, p])).values());
 
-        setRecommendations(recommendedProducts);
+        setRecommendations(uniqueRecommendations.slice(0, 6));
+
       } catch (error) {
         console.error("Failed to get product recommendations:", error);
+        // Silently fail, don't show an error to the user
+        setRecommendations([]);
       } finally {
         setLoading(false);
       }
     }
+    
+    // Only run if there are products, to avoid running on initial empty state
+    if (allProducts.length > 0) {
+      getRecommendations();
+    } else {
+      setLoading(false);
+    }
 
-    getRecommendations();
-  }, [allProducts]);
+  }, [allProducts, favorites]);
   
   if (loading) {
     return (
@@ -60,14 +80,19 @@ export default function ProductRecommendations({ allProducts }: ProductRecommend
           <CardDescription>Our AI is finding products you might like...</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex space-x-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="w-1/3 space-y-2">
-                <Skeleton className="h-40 w-full" />
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ))}
+          <div className="flex space-x-4 overflow-hidden">
+            <div className="w-full md:w-1/2 lg:w-1/3 p-1">
+                <Skeleton className="h-64 w-full" />
+                <Skeleton className="h-6 w-3/4 mt-2" />
+            </div>
+             <div className="w-full md:w-1/2 lg:w-1/3 p-1 hidden md:block">
+                <Skeleton className="h-64 w-full" />
+                <Skeleton className="h-6 w-3/4 mt-2" />
+            </div>
+             <div className="w-full md:w-1/2 lg:w-1/3 p-1 hidden lg:block">
+                <Skeleton className="h-64 w-full" />
+                <Skeleton className="h-6 w-3/4 mt-2" />
+            </div>
           </div>
         </CardContent>
       </Card>
