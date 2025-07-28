@@ -111,7 +111,7 @@ export default function AdminProductsPage() {
         };
         const result = await addProduct(productData);
         if (result.success) {
-            toast({ title: "Success", description: "Product added successfully." });
+            toast({ variant: "success", title: "Success", description: "Product added successfully." });
             setNewProduct(initialNewProductState);
             setIsAddDialogOpen(false);
             fetchProducts();
@@ -140,7 +140,7 @@ export default function AdminProductsPage() {
             };
             const result = await editProduct(editingProduct.id, productData);
             if (result.success) {
-                toast({ title: "Success", description: "Product updated successfully." });
+                toast({ variant: "success", title: "Success", description: "Product updated successfully." });
                 setEditingProduct(null);
                 setIsEditDialogOpen(false);
                 fetchProducts();
@@ -158,7 +158,7 @@ export default function AdminProductsPage() {
        try {
         const result = await deleteProduct(productId);
         if(result.success) {
-            toast({ title: "Success", description: "Product deleted successfully." });
+            toast({ variant: "success", title: "Success", description: "Product deleted successfully." });
             fetchProducts();
         } else {
             throw new Error(result.error || "Failed to delete product.");

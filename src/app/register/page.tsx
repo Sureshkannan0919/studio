@@ -47,7 +47,7 @@ export default function RegisterPage() {
         role: 'user',
       });
 
-      toast({ title: "Success", description: "Account created successfully." });
+      toast({ variant: "success", title: "Success", description: "Account created successfully." });
       router.push("/");
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {

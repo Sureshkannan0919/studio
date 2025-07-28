@@ -33,6 +33,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       return [...prevFavorites, product];
     });
     toast({
+      variant: "success",
       title: "Added to favorites",
       description: `${product.name} has been added to your favorites.`,
     });

@@ -54,7 +54,7 @@ export default function AdminOrdersPage() {
     try {
       const result = await updateOrderStatus(orderId, status);
       if (result.success) {
-        toast({ title: "Success", description: "Order status updated." });
+        toast({ variant: "success", title: "Success", description: "Order status updated." });
         fetchOrders(); // Refresh orders list
       } else {
         throw new Error(result.error || "An unknown error occurred.");

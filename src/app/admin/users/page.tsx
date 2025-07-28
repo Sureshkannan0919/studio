@@ -74,7 +74,7 @@ export default function AdminUsersPage() {
     try {
       const result = await updateUserRole(uid, role);
       if(result.success) {
-        toast({ title: "Success", description: "User role updated." });
+        toast({ variant: "success", title: "Success", description: "User role updated." });
         fetchUsers(); // Refresh users list
       } else {
         throw new Error(result.error || "An unknown error occurred.");

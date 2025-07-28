@@ -45,6 +45,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return [...prevCart, { ...product, id: cartItemId, productId: product.id, quantity }];
     });
     toast({
+      variant: "success",
       title: "Added to cart",
       description: `${product.name} ${product.size ? `(Size: ${product.size})` : ''} has been added to your cart.`,
     });

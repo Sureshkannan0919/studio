@@ -29,7 +29,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      toast({ title: "Success", description: "Logged in successfully." });
+      toast({ variant: "success", title: "Success", description: "Logged in successfully." });
       router.push("/");
     } catch (error: any) {
       toast({ variant: "destructive", title: "Login Failed", description: error.message });
@@ -40,7 +40,7 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      toast({ title: "Success", description: "Logged in successfully." });
+      toast({ variant: "success", title: "Success", description: "Logged in successfully." });
       router.push("/");
     } catch (error: any) {
       toast({ variant: "destructive", title: "Login Failed", description: error.message });

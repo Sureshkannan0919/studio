@@ -152,6 +152,7 @@ export default function CheckoutPage() {
       
       if (result.success) {
         toast({
+          variant: "success",
           title: "Order Placed!",
           description: "Thank you for your purchase.",
         });
@@ -376,5 +377,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
-    
