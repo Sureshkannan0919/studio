@@ -17,6 +17,7 @@ import {
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
+import SkLogo from "@/components/icons/sk-logo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -52,7 +53,7 @@ export default function LoginPage() {
       <Card className="mx-auto max-w-sm w-full">
         <CardHeader className="text-center">
            <Link href="/" className="flex items-center justify-center gap-2 mb-4">
-            <span className="font-bold font-headline text-2xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">SK Skates</span>
+            <SkLogo className="h-10 w-auto" />
           </Link>
           <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
           <CardDescription>

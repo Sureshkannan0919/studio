@@ -11,6 +11,7 @@ import { Home, Package, ShoppingCart, Users, Settings, Menu, ShieldCheck, Lock, 
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import SkLogo from "@/components/icons/sk-logo";
 
 const navItems = [
   { href: "/admin", label: "Overview", icon: Home },
@@ -83,6 +84,7 @@ export default function AdminLayout({
       <aside className="hidden w-64 flex-col border-r bg-background md:flex">
         <div className="flex h-16 shrink-0 items-center gap-2 border-b px-6">
           <Link href="/" className="flex items-center gap-2 font-semibold">
+            <SkLogo className="h-8 w-auto text-primary" />
             <span className="font-bold font-headline text-lg">SK Skates Admin</span>
           </Link>
         </div>
@@ -125,7 +127,8 @@ export default function AdminLayout({
                 <SheetDescription className="sr-only">Main navigation for the admin dashboard.</SheetDescription>
                  <div className="flex h-16 shrink-0 items-center gap-2 border-b px-6">
                     <Link href="/" className="flex items-center gap-2 font-semibold">
-                        <span className="font-bold font-headline text-lg">SK Skates Admin</span>
+                      <SkLogo className="h-8 w-auto text-primary" />
+                      <span className="font-bold font-headline text-lg">SK Skates Admin</span>
                     </Link>
                 </div>
                 <nav className="grid gap-2 p-4 text-lg font-medium">

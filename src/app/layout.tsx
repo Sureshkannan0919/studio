@@ -53,7 +53,6 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap"
           rel="stylesheet"
         />
-        <link rel="icon" href="/icons/logo.png" sizes="any" />
       </head>
       <body className="font-body antialiased">
         <Providers>

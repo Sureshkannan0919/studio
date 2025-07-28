@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Twitter, Github, Instagram } from "lucide-react";
+import SkLogo from "./icons/sk-logo";
 
 export default function Footer() {
   return (
@@ -7,7 +8,10 @@ export default function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <span className="font-bold font-headline text-xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">SK Skates</span>
+             <Link href="/" className="flex items-center gap-2">
+                <SkLogo className="h-8 w-auto" />
+                <span className="font-bold font-headline text-xl">SK Skates</span>
+            </Link>
           </div>
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} SK Skates, Inc. All rights reserved.
