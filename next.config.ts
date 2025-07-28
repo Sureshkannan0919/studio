@@ -29,6 +29,12 @@ const nextConfig: NextConfig = {
         hostname: 'i.postimg.cc',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'rectoskates.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
