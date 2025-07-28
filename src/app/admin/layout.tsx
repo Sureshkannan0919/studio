@@ -8,7 +8,7 @@ import { onAuthStateChanged, type User as FirebaseAuthUser } from "firebase/auth
 import { auth } from "@/lib/firebase";
 import { getUser } from "@/lib/firebase/users";
 import { Home, Package, ShoppingCart, Users, Settings, Menu, ShieldCheck, Lock, ArrowLeft } from "lucide-react";
-import { SkateboardIcon } from "@/components/icons/skateboard";
+import { InlineSkateIcon } from "@/components/icons/inlineskate";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -84,7 +84,7 @@ export default function AdminLayout({
       <aside className="hidden w-64 flex-col border-r bg-background md:flex">
         <div className="flex h-16 shrink-0 items-center gap-2 border-b px-6">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <SkateboardIcon className="h-6 w-6 text-primary" />
+            <InlineSkateIcon className="h-6 w-6 text-primary" />
             <span>SK Skates Admin</span>
           </Link>
         </div>
@@ -127,7 +127,7 @@ export default function AdminLayout({
                 <SheetDescription className="sr-only">Main navigation for the admin dashboard.</SheetDescription>
                  <div className="flex h-16 shrink-0 items-center gap-2 border-b px-6">
                     <Link href="/" className="flex items-center gap-2 font-semibold">
-                        <SkateboardIcon className="h-6 w-6 text-primary" />
+                        <InlineSkateIcon className="h-6 w-6 text-primary" />
                         <span>SK Skates Admin</span>
                     </Link>
                 </div>

@@ -26,7 +26,7 @@ import {
   Settings
 } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
-import { SkateboardIcon } from "./icons/skateboard";
+import { InlineSkateIcon } from "./icons/inlineskate";
 import { onAuthStateChanged, type User as FirebaseAuthUser } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { getUser } from '@/lib/firebase/users';
@@ -77,7 +77,7 @@ export default function Header() {
       <div className="container flex h-16 items-center">
         <div className="flex items-center gap-2 mr-auto">
           <Link href="/" className="flex items-center gap-2">
-            <SkateboardIcon className="h-6 w-6 text-primary" />
+            <InlineSkateIcon className="h-6 w-6 text-primary" />
             <span className="font-bold font-headline text-lg">SK Skates</span>
           </Link>
         </div>
@@ -195,7 +195,7 @@ export default function Header() {
                 <SheetTitle className="sr-only">Menu</SheetTitle>
                 <div className="p-4">
                     <Link href="/" className="flex items-center gap-2 mb-8" onClick={() => setIsSheetOpen(false)}>
-                        <SkateboardIcon className="h-6 w-6 text-primary" />
+                        <InlineSkateIcon className="h-6 w-6 text-primary" />
                         <span className="font-bold font-headline text-lg">SK Skates</span>
                     </Link>
                     <nav className="flex flex-col gap-1">

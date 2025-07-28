@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SkateboardIcon } from "@/components/icons/skateboard";
+import { InlineSkateIcon } from "@/components/icons/inlineskate";
 import { auth } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
@@ -67,7 +67,7 @@ export default function RegisterPage() {
       <Card className="mx-auto max-w-sm w-full">
          <CardHeader className="text-center">
            <Link href="/" className="flex items-center justify-center gap-2 mb-4">
-            <SkateboardIcon className="h-8 w-8 text-primary" />
+            <InlineSkateIcon className="h-8 w-8 text-primary" />
           </Link>
           <CardTitle className="text-2xl font-headline">Create an Account</CardTitle>
           <CardDescription>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Twitter, Github, Instagram } from "lucide-react";
-import { SkateboardIcon } from "./icons/skateboard";
+import { InlineSkateIcon } from "./icons/inlineskate";
 
 export default function Footer() {
   return (
@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <SkateboardIcon className="h-6 w-6 text-primary" />
+            <InlineSkateIcon className="h-6 w-6 text-primary" />
             <span className="font-bold font-headline text-lg">SK Skates</span>
           </div>
           <p className="text-sm text-muted-foreground">
