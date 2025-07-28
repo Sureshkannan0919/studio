@@ -5,17 +5,17 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://sk-skates.com'), // Replace with your actual domain
+  metadataBase: new URL('https://shopwave.com'), // Replace with your actual domain
   title: {
-    default: 'SK Skates | Your One-Stop Skate Shop',
-    template: '%s | SK Skates',
+    default: 'ShopWave | Your One-Stop E-commerce Destination',
+    template: '%s | ShopWave',
   },
-  description: 'Your one-stop shop for skateboards, decks, trucks, wheels, apparel, and all things skateboarding. RIDE ON.',
+  description: 'Your one-stop shop for the best products, from electronics to fashion. Great deals, fast shipping!',
   openGraph: {
-    title: 'SK Skates | Your One-Stop Skate Shop',
-    description: 'Your one-stop shop for all things skateboarding.',
-    url: 'https://sk-skates.com', // Replace with your actual domain
-    siteName: 'SK Skates',
+    title: 'ShopWave | Your One-Stop E-commerce Destination',
+    description: 'Your one-stop for the best products.',
+    url: 'https://shopwave.com', // Replace with your actual domain
+    siteName: 'ShopWave',
     images: [
       {
         url: '/og-image.png', // Replace with a link to your open graph image
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SK Skates | Your One-Stop Skate Shop',
-    description: 'Your one-stop shop for all things skateboarding.',
+    title: 'ShopWave | Your One-Stop E-commerce Destination',
+    description: 'Your one-stop for the best products.',
     // images: ['/og-image.png'], // Replace with a link to your open graph image
   },
 };
@@ -52,6 +52,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap"
           rel="stylesheet"
         />
+        <link rel="icon" href="/icons/logo.png" sizes="any" />
       </head>
       <body className="font-body antialiased">
         <Providers>

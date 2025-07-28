@@ -14,10 +14,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { InlineSkateIcon } from "@/components/icons/inlineskate";
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -53,7 +53,7 @@ export default function LoginPage() {
       <Card className="mx-auto max-w-sm w-full">
         <CardHeader className="text-center">
            <Link href="/" className="flex items-center justify-center gap-2 mb-4">
-            <InlineSkateIcon className="h-8 w-8 text-primary" />
+            <Image src="/icons/logo.png" alt="ShopWave logo" width={32} height={32} />
           </Link>
           <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
           <CardDescription>
