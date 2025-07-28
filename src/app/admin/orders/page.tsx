@@ -52,11 +52,16 @@ export default function AdminOrdersPage() {
 
   const handleStatusUpdate = async (orderId: string, status: Order['status']) => {
     try {
-      await updateOrderStatus(orderId, status);
-      toast({ title: "Success", description: "Order status updated." });
-      fetchOrders(); // Refresh orders list
+      const result = await updateOrderStatus(orderId, status);
+      if (result.success) {
+        toast({ title: "Success", description: "Order status updated." });
+        fetchOrders(); // Refresh orders list
+      } else {
+        throw new Error(result.error || "An unknown error occurred.");
+      }
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to update order status." });
+       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      toast({ variant: "destructive", title: "Error", description: `Failed to update order status: ${errorMessage}` });
       console.error(error);
     }
   };

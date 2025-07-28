@@ -104,17 +104,23 @@ export default function AdminProductsPage() {
 
     const handleAddProduct = async () => {
       try {
-        await addProduct({
+        const productData = {
           ...newProduct,
           price: parseFloat(newProduct.price) || 0,
           sizes: newProduct.sizes.split(',').map(s => s.trim()).filter(Boolean),
-        });
-        toast({ title: "Success", description: "Product added successfully." });
-        setNewProduct(initialNewProductState);
-        setIsAddDialogOpen(false);
-        fetchProducts(); // Refresh product list
+        };
+        const result = await addProduct(productData);
+        if (result.success) {
+            toast({ title: "Success", description: "Product added successfully." });
+            setNewProduct(initialNewProductState);
+            setIsAddDialogOpen(false);
+            fetchProducts();
+        } else {
+            throw new Error(result.error || "Failed to add product.");
+        }
       } catch (error) {
-        toast({ variant: "destructive", title: "Error", description: "Failed to add product." });
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        toast({ variant: "destructive", title: "Error", description: `Failed to add product: ${errorMessage}` });
         console.error(error);
       }
     };
@@ -127,28 +133,39 @@ export default function AdminProductsPage() {
     const handleUpdateProduct = async () => {
         if (!editingProduct) return;
         try {
-            await editProduct(editingProduct.id, {
+            const productData = {
                 ...editingProduct,
                 price: parseFloat(editingProduct.price as any) || 0,
                 sizes: editingProduct.sizesStr?.split(',').map(s => s.trim()).filter(Boolean) || []
-            });
-            toast({ title: "Success", description: "Product updated successfully." });
-            setEditingProduct(null);
-            setIsEditDialogOpen(false);
-            fetchProducts();
+            };
+            const result = await editProduct(editingProduct.id, productData);
+            if (result.success) {
+                toast({ title: "Success", description: "Product updated successfully." });
+                setEditingProduct(null);
+                setIsEditDialogOpen(false);
+                fetchProducts();
+            } else {
+                throw new Error(result.error || "Failed to update product.");
+            }
         } catch (error) {
-            toast({ variant: "destructive", title: "Error", description: "Failed to update product." });
+            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+            toast({ variant: "destructive", title: "Error", description: `Failed to update product: ${errorMessage}` });
             console.error(error);
         }
     }
 
     const handleDeleteProduct = async (productId: string) => {
        try {
-        await deleteProduct(productId);
-        toast({ title: "Success", description: "Product deleted successfully." });
-        fetchProducts(); // Refresh product list
+        const result = await deleteProduct(productId);
+        if(result.success) {
+            toast({ title: "Success", description: "Product deleted successfully." });
+            fetchProducts();
+        } else {
+            throw new Error(result.error || "Failed to delete product.");
+        }
       } catch (error) {
-        toast({ variant: "destructive", title: "Error", description: "Failed to delete product." });
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        toast({ variant: "destructive", title: "Error", description: `Failed to delete product: ${errorMessage}` });
         console.error(error);
       }
     };

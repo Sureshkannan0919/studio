@@ -2,7 +2,8 @@
 'use server';
 
 import { db } from '@/lib/firebase';
-import { doc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, updateDoc } from 'firestore/lite';
+import { verifyUserRole } from './admin';
 
 // A server-side function to add a new user to the 'users' collection
 export async function addUser(userData: {
@@ -26,6 +27,7 @@ export async function addUser(userData: {
 
 // A server-side function to update a user's role
 export async function updateUserRole(uid: string, role: 'user' | 'superuser') {
+    await verifyUserRole('superuser');
     try {
         const userRef = doc(db, "users", uid);
         await updateDoc(userRef, { role });

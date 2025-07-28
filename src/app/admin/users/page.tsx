@@ -72,11 +72,16 @@ export default function AdminUsersPage() {
 
   const handleRoleUpdate = async (uid: string, role: 'user' | 'superuser') => {
     try {
-      await updateUserRole(uid, role);
-      toast({ title: "Success", description: "User role updated." });
-      fetchUsers(); // Refresh users list
+      const result = await updateUserRole(uid, role);
+      if(result.success) {
+        toast({ title: "Success", description: "User role updated." });
+        fetchUsers(); // Refresh users list
+      } else {
+        throw new Error(result.error || "An unknown error occurred.");
+      }
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to update user role." });
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      toast({ variant: "destructive", title: "Error", description: `Failed to update user role: ${errorMessage}` });
       console.error(error);
     }
   };
@@ -164,5 +169,3 @@ export default function AdminUsersPage() {
     </div>
   );
 }
-
-    
