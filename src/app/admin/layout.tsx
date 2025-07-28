@@ -7,7 +7,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { onAuthStateChanged, type User as FirebaseAuthUser } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { getUser } from "@/lib/firebase/users";
-import { Home, Package, ShoppingCart, Users, Settings, Menu, ShieldCheck, Lock, ArrowLeft } from "lucide-react";
+import { getOrders } from "@/lib/firebase/orders";
+import { Home, Package, ShoppingCart, Users, Bell, Menu, ShieldCheck, Lock, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -30,14 +31,21 @@ export default function AdminLayout({
   const [user, setUser] = useState<FirebaseAuthUser | null>(null);
   const [isSuperuser, setIsSuperuser] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [newOrderCount, setNewOrderCount] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        const appUser = await getUser(currentUser.uid);
+        const [appUser, allOrders] = await Promise.all([
+            getUser(currentUser.uid),
+            getOrders()
+        ]);
+        
         if (appUser && appUser.role === 'superuser') {
           setIsSuperuser(true);
+          const processingOrders = allOrders.filter(order => order.status === 'Processing').length;
+          setNewOrderCount(processingOrders);
         } else {
           setIsSuperuser(false);
           router.push('/'); // Redirect non-superusers
@@ -161,6 +169,20 @@ export default function AdminLayout({
           </Sheet>
           </div>
            <h1 className="text-lg font-semibold flex-1 md:flex-grow-0 whitespace-nowrap">Admin Dashboard</h1>
+           <div className="ml-auto">
+             <Button variant="ghost" size="icon" asChild>
+              <Link href="/admin/orders" className="relative">
+                <Bell className={cn("h-5 w-5", newOrderCount > 0 && 'animate-ring')} />
+                {newOrderCount > 0 && (
+                  <span className="absolute top-0.5 right-0.5 flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                  </span>
+                )}
+                <span className="sr-only">New Orders</span>
+              </Link>
+            </Button>
+           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             {children}
@@ -172,3 +194,5 @@ export default function AdminLayout({
     </div>
   );
 }
+
+    
