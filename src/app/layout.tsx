@@ -5,8 +5,33 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
-  title: 'SK Skates',
-  description: 'Your one-stop shop for all things skateboarding.',
+  metadataBase: new URL('https://sk-skates.com'), // Replace with your actual domain
+  title: {
+    default: 'SK Skates | Your One-Stop Skate Shop',
+    template: '%s | SK Skates',
+  },
+  description: 'Your one-stop shop for skateboards, decks, trucks, wheels, apparel, and all things skateboarding. RIDE ON.',
+  openGraph: {
+    title: 'SK Skates | Your One-Stop Skate Shop',
+    description: 'Your one-stop shop for all things skateboarding.',
+    url: 'https://sk-skates.com', // Replace with your actual domain
+    siteName: 'SK Skates',
+    images: [
+      {
+        url: '/og-image.png', // Replace with a link to your open graph image
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SK Skates | Your One-Stop Skate Shop',
+    description: 'Your one-stop shop for all things skateboarding.',
+    // images: ['/og-image.png'], // Replace with a link to your open graph image
+  },
 };
 
 export default function RootLayout({
