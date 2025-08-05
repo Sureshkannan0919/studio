@@ -18,6 +18,8 @@ import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import SkLogo from "@/components/icons/sk-logo";
+import { getUser } from "@/lib/firebase/users";
+import { addUser } from "@/lib/firebase/users-admin";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -39,7 +41,22 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user already exists in our database
+      const appUser = await getUser(user.uid);
+      
+      if (!appUser) {
+        // If user doesn't exist, create a new entry
+        await addUser({
+          uid: user.uid,
+          name: user.displayName || "Google User",
+          email: user.email!,
+          role: 'user',
+        });
+      }
+
       toast({ variant: "success", title: "Success", description: "Logged in successfully." });
       router.push("/");
     } catch (error: any) {
