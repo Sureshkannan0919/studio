@@ -1,10 +1,7 @@
 {
-  "name": "ShopWave",
-  "short_name": "ShopWave",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "name": "SK Skates",
+  "short_name": "SK Skates",
+  "description": "Your one-stop shop for all things skates. RIDE ON.",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -15,6 +12,11 @@
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
-      }
-  ]
+    }
+  ],
+  "theme_color": "#111827",
+  "background_color": "#111827",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
 }

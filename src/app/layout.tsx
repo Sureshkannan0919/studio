@@ -54,13 +54,21 @@ export default function RootLayout({
           rel="stylesheet"
         />
         <link rel="manifest" href="/manifest.json" />
-        <script>
-          {`
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
             if ('serviceWorker' in navigator) {
-              navigator.serviceWorker.register('/sw.js');
+              window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                  console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                  console.log('SW registration failed: ', registrationError);
+                });
+              });
             }
-          `}
-        </script>
+          `,
+          }}
+        />
       </head>
       <body className="font-body antialiased">
         <Providers>
