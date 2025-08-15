@@ -37,14 +37,14 @@ export default function Chatbot() {
     <>
       <Button
         onClick={toggleChat}
-        className="fixed bottom-4 right-4 h-16 w-16 rounded-full shadow-lg z-[9998]"
+        className="fixed bottom-4 right-4 h-16 w-16 rounded-full shadow-lg z-[99998]"
         size="icon"
       >
         {isOpen ? <X className="h-8 w-8" /> : <Bot className="h-8 w-8" />}
       </Button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-4 z-[9999] animate-in fade-in-50 slide-in-from-bottom-10 duration-300">
+        <div className="fixed bottom-24 right-4 z-[99999] animate-in fade-in-50 slide-in-from-bottom-10 duration-300">
           <Card className="w-[350px] h-[500px] flex flex-col shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <div className='flex items-center gap-2'>
