@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from '@/components/providers';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import Chatbot from '@/components/chatbot';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sk-skates.com'), // Replace with your actual domain
@@ -76,6 +77,7 @@ export default function RootLayout({
             <Header />
             <main className="flex-grow">{children}</main>
             <Footer />
+            <Chatbot />
           </div>
         </Providers>
       </body>
