@@ -9,76 +9,33 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import SkLogo from './icons/sk-logo';
-
-interface Message {
-  text: string;
-  sender: 'user' | 'bot';
-}
+import { useChatbot } from '@/hooks/use-chatbot';
 
 export default function Chatbot() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { isOpen, messages, isLoading, toggleChat, sendMessage } = useChatbot();
   const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      setMessages([
-        { text: "Hello! I'm the SK Skates assistant. How can I help you today?", sender: 'bot' }
-      ]);
-    }
-  }, [isOpen, messages.length]);
-
-  useEffect(() => {
     // Scroll to the bottom whenever messages change
-    if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('div');
+    if (isOpen && scrollAreaRef.current) {
+        const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
         if(viewport) {
             viewport.scrollTop = viewport.scrollHeight;
         }
     }
-  }, [messages]);
+  }, [messages, isOpen]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim() || isLoading) return;
-
-    const userMessage: Message = { text: inputValue, sender: 'user' };
-    setMessages(prev => [...prev, userMessage]);
+    await sendMessage(inputValue);
     setInputValue('');
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('http://127.0.0.1:8000/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: inputValue }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const botMessage: Message = { text: data.response || "Sorry, I didn't understand that.", sender: 'bot' };
-      setMessages(prev => [...prev, botMessage]);
-
-    } catch (error) {
-      console.error('Chatbot API error:', error);
-      const errorMessage: Message = { text: "Sorry, I'm having trouble connecting. Please try again later.", sender: 'bot' };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   return (
     <>
       <Button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleChat}
         className="fixed bottom-4 right-4 h-16 w-16 rounded-full shadow-lg z-[9998]"
         size="icon"
       >
@@ -86,7 +43,7 @@ export default function Chatbot() {
       </Button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-4 z-[9999]">
+        <div className="fixed bottom-24 right-4 z-[9999] animate-in fade-in-50 slide-in-from-bottom-10 duration-300">
           <Card className="w-[350px] h-[500px] flex flex-col shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <div className='flex items-center gap-2'>

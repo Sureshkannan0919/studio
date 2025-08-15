@@ -77,8 +77,8 @@ export default function RootLayout({
             <Header />
             <main className="flex-grow">{children}</main>
             <Footer />
-            <Chatbot />
           </div>
+          <Chatbot />
         </Providers>
       </body>
     </html>
