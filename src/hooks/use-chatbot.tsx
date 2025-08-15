@@ -53,6 +53,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
 
     try {
+      // NOTE: This uses a local endpoint. In a real deployment, 
+      // this URL would need to point to a deployed backend service.
       const response = await fetch('http://127.0.0.1:8000/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
