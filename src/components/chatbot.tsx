@@ -12,12 +12,14 @@ import SkLogo from './icons/sk-logo';
 import { useChatbot } from '@/hooks/use-chatbot';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Chatbot() {
   const { isOpen, messages, isLoading, toggleChat, sendMessage } = useChatbot();
   const [inputValue, setInputValue] = useState('');
   const [user, setUser] = useState<User | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -35,6 +37,19 @@ export default function Chatbot() {
         }
     }
   }, [messages, isOpen]);
+  
+  const handleIconClick = () => {
+    if (user) {
+      toggleChat();
+    } else {
+      toast({
+        title: 'Login Required',
+        description: 'Please login to use the chatbot.',
+        variant: 'destructive',
+        duration: 3000,
+      });
+    }
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,21 +58,17 @@ export default function Chatbot() {
     setInputValue('');
   };
 
-  if (!user) {
-    return null;
-  }
-
   return (
     <>
       <Button
-        onClick={toggleChat}
+        onClick={handleIconClick}
         className="fixed bottom-4 right-4 h-16 w-16 rounded-full shadow-lg z-[99998]"
         size="icon"
       >
         {isOpen ? <X className="h-8 w-8" /> : <Bot className="h-8 w-8" />}
       </Button>
 
-      {isOpen && (
+      {isOpen && user && (
         <div className="fixed bottom-24 right-4 z-[99999] animate-in fade-in-50 slide-in-from-bottom-10 duration-300">
           <Card className="w-[350px] h-[500px] flex flex-col shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
