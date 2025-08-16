@@ -30,6 +30,7 @@ import { onAuthStateChanged, type User as FirebaseAuthUser } from 'firebase/auth
 import { auth } from '@/lib/firebase';
 import { getUser } from '@/lib/firebase/users';
 import SkLogo from './icons/sk-logo';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Header() {
   const { totalItems } = useCart();
@@ -38,6 +39,7 @@ export default function Header() {
   const [user, setUser] = useState<FirebaseAuthUser | null>(null);
   const [isSuperuser, setIsSuperuser] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -70,6 +72,15 @@ export default function Header() {
   const handleLinkClick = (href: string) => {
     router.push(href);
     setIsSheetOpen(false);
+  };
+
+  const handleLogout = () => {
+    auth.signOut();
+    toast({
+      variant: "success",
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
   };
 
   return (
@@ -159,7 +170,7 @@ export default function Header() {
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => auth.signOut()}>
+                    <DropdownMenuItem onClick={handleLogout}>
                       Logout
                     </DropdownMenuItem>
                   </>
@@ -242,7 +253,7 @@ export default function Header() {
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => { auth.signOut(); setIsSheetOpen(false); }}>
+                              <DropdownMenuItem onClick={() => { handleLogout(); setIsSheetOpen(false); }}>
                                 Logout
                               </DropdownMenuItem>
                             </>
