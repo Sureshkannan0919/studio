@@ -10,11 +10,21 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import SkLogo from './icons/sk-logo';
 import { useChatbot } from '@/hooks/use-chatbot';
+import { onAuthStateChanged, type User } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 export default function Chatbot() {
   const { isOpen, messages, isLoading, toggleChat, sendMessage } = useChatbot();
   const [inputValue, setInputValue] = useState('');
+  const [user, setUser] = useState<User | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     // Scroll to the bottom whenever messages change
@@ -32,6 +42,10 @@ export default function Chatbot() {
     await sendMessage(inputValue);
     setInputValue('');
   };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <>
