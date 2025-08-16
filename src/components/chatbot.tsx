@@ -39,7 +39,7 @@ export default function Chatbot() {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if(!inputValue.trim()) return;
-    await sendMessage(inputValue);
+    await sendMessage(inputValue, user?.uid);
     setInputValue('');
   };
 

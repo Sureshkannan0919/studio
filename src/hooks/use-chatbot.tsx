@@ -21,7 +21,7 @@ interface ChatContextType {
   isLoading: boolean;
   toggleChat: () => void;
   closeChat: () => void;
-  sendMessage: (message: string) => Promise<void>;
+  sendMessage: (message: string, uid?: string) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -45,7 +45,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setIsOpen(false);
   }, []);
 
-  const sendMessage = useCallback(async (messageText: string) => {
+  const sendMessage = useCallback(async (messageText: string, uid?: string) => {
     if (!messageText.trim() || isLoading) return;
 
     const userMessage: Message = { text: messageText, sender: 'user' };
@@ -58,7 +58,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       const response = await fetch('http://127.0.0.1:8000/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: messageText }),
+        body: JSON.stringify({ message: messageText, userId: uid }),
       });
 
       if (!response.ok) {
